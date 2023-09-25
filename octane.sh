@@ -1,0 +1,1 @@
+php artisan octane:start --host=0.0.0.0 --port=8088 --workers=2 --max-requests=250  --watch
