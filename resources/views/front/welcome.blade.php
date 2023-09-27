@@ -9,13 +9,12 @@
 		--white-shade : #dfdfdf
 		--f7-safe-area-bottom: 34px;font-size:16px;
 		--f7-navbar-bg-color-rgb : var(--f7-theme-color-rgb);
-		--f7-navbar-text-color:#dfdfdf;
+		--f7-navbar-text-color:#fff;
 		--f7-navbar-height:48px;
-		--f7-navbar-link-color:#dfdfdf;
+		--f7-navbar-link-color:#fff;
 		--f7-font-family: nanumsquare -apple-system, SF Pro Text, SF UI Text, system-ui, Helvetica Neue, Helvetica, Arial, sans-serif;
 		--f7-toolbar-font-size:14px;
 		--f7-list-font-size:14px;
-		--f7-list-item-min-height:36px;
 			 
 		--f7-toolbar-inner-padding-left:16px;
 		--f7-toolbar-inner-padding-right:16px;
@@ -28,7 +27,7 @@
 		--f7-ios-primary-shade: #0066d6;
 		--f7-ios-primary-tint: #298fff;
 		--f7-ios-primary-rgb: 0, 122, 255;
-
+		--f7-page-bg-color:#efefef;
 			"
 >
     <head>
@@ -64,99 +63,9 @@
 		<link href="https://hangeul.pstatic.net/hangeul_static/css/nanum-square.css" rel="stylesheet" />
 		
 		<!-- https://developer-1px.github.io/adorable-css/tutorial -->
-		<script src="https://unpkg.com/adorable-css"></script>
-        
-		<script src="https://cdn.tailwindcss.com"></script>
-		<script>
-            tailwind.config ={
-                prefix: 'tw-',
-                theme: {
-                    screens: {
-                        sm: '480px',
-                        md: '768px',
-                        lg: '976px',
-                        xl: '1440px',
-                        '2xl':'1800px'
-                    },
-									colors:{
-					light: {
-						50:  '#fdfdfd',
-						100: '#fcfcfc',
-						200: '#fafafa',
-						300: '#f8f9fa',
-						400: '#f6f6f6',
-						500: '#f2f2f2',
-						600: '#f1f3f5',
-						700: '#e9ecef',
-						800: '#dee2e6',
-						900: '#dde1e3',
-					  },
-					  dark: {
-						50: '#4a4a4a',
-						100: '#3c3c3c',
-						200: '#323232',
-						300: '#2d2d2d',
-						400: '#222222',
-						500: '#1f1f1f',
-						600: '#1c1c1e',
-						700: '#1b1b1b',
-						800: '#181818',
-						900: '#0f0f0f',
-					  },
-					'mandy': {
-						'50': '#fef2f3',
-						'100': '#fde6e7',
-						'200': '#fbd0d5',
-						'300': '#f7aab2',
-						'400': '#f27a8a',
-						'500': '#ea546c',
-						'600': '#d5294d',
-						'700': '#b31d3f',
-						'800': '#961b3c',
-						'900': '#811a39',
-						'950': '#48091a',
-					},
-					'picton-blue': {
-						'50': '#f0f8fe',
-						'100': '#ddeefc',
-						'200': '#c3e3fa',
-						'300': '#9bd1f5',
-						'400': '#6bb8ef',
-						'500': '#53a1ea',
-						'600': '#337fdd',
-						'700': '#2a6acb',
-						'800': '#2856a5',
-						'900': '#264b82',
-						'950': '#1b2e50',
-					},
+		<script src="/js/libraries.js?version={{$assets_version}}"></script>
+		<script src="/js/tailwind.ext.js?version={{$assets_version}}"></script>
 
-				},
-                    extend: {},
-                },
-                corePlugins: {
-                    preflight: false,
-                },
-                plugins: [],
-                important: true,
-            }
-        </script>
-		<style>
-			.tw-border-init , .tw-border-init *, .tw-border-init :before, .tw-border-init :after {
-                box-sizing: border-box;
-				border-width: 0;
-				border-style: solid;
-				border-color: #e5e7eb;
-            }
-            .nanumsquare{
-                font-family: 'NanumSquare';
-            }
-            .nanumsquare-bold{
-                font-family: 'NanumSquareBold';
-            }
-            .nanumsquare-extra-bold{
-                font-family: 'NanumSquareExtraBold';
-            }
-		</style>
 		@vite(['resources/css/app.css', 'resources/js/app.js'])
 		
 		<!-- GTAG -->
@@ -182,6 +91,25 @@
 			button{
 				width:auto;
 			}
+			.tw-border-init , .tw-border-init *, .tw-border-init :before, .tw-border-init :after {
+                box-sizing: border-box;
+				border-width: 0;
+				border-style: solid;
+				border-color: #e5e7eb;
+				border: 0 solid #e5e7eb;
+            }
+			.tw-solid{
+				border-style: solid !important;
+			}
+            .nanumsquare{
+                font-family: 'NanumSquare';
+            }
+            .nanumsquare-bold{
+                font-family: 'NanumSquareBold';
+            }
+            .nanumsquare-extra-bold{
+                font-family: 'NanumSquareExtraBold';
+            }
 		</style>
 		<script src="/js/framework7.custom.js"></script>
 		<!-- https://ant.design/components/overview/ -->
@@ -226,7 +154,7 @@
 								@endif
 							</div>
 						</div>
-						<div class="page-content">
+						<div class="page-content" style="		--f7-list-item-min-height:36px;">
 						
 							<div class="list accordion-list leftmenu">
 								<ul class="custom-menu-list">

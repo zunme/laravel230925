@@ -12,7 +12,7 @@ routes.push(
                         </div>
                         <div class="title tw-flex tw-font-bold tw-items-center tw-text-[18px] tw-text-gray-600/90" style="left: -2px;">
                             <div class="" style="position:relative;">
-                                <img class="tw-h-6 tw-mr-2" src="/images/login.png" alt="logo">
+                                <span>페이지가 없습니다</span>
                             </div>
                         </div>
                         <div class="right">

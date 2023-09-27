@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Auth\CustomLoginController;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,6 +19,8 @@ Route::get('/', function () {
     return view('front.welcome');
 });
 
+Route::post('login', [CustomLoginController::class, 'store']);
+
 /* framework */
 Route::prefix('pages')->group(function () {
 	Route::get('/{page}' , [FrameworkController::class, 'showPage']);
@@ -30,3 +33,5 @@ Route::get('/{ctname}', [FrameworkController::class, 'showIndex']);
 Route::get('/{ctname}/{id}', [FrameworkController::class, 'showIndex']);
 Route::get('/{ctname}/{id}/{fnname}', [FrameworkController::class, 'showIndex']);
 Route::get('/{ctname}/{id}/{fnname}/{idsub}', [FrameworkController::class, 'showIndex']);
+
+require __DIR__.'/auth.php';
