@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
 use App\Http\Controllers\Auth\CustomLoginController;
 
 /*
@@ -14,13 +15,59 @@ use App\Http\Controllers\Auth\CustomLoginController;
 |
 */
 use App\Http\Controllers\Front\FrameworkController;
+use App\Models\User;
 
 Route::get('/', function () {
     return view('front.welcome');
 });
+Route::get('/test', 'App\Http\Controllers\TestdefaultController@tmappoi');
+Route::get('/sanctum/token', function (Request $request) {
+	$user = \Auth::user();
+	if( !$user ){
+	    $request->validate([
+			'userid' => 'required|string',
+			'password' => 'nullable',
+		]);
+		$user = User::where('userid', $request->userid)->first();
+		if (! $user || ! Hash::check($request->password, $user->password)) {
+			return $this->error('인증을 하지 못했습니다');
+		}	
+	}
+	
+	switch($user->authtype){
+		case( 'admin') : 
+			$avilities =['role:admin'];
+			break;
+		case( 'partner') : 
+			$avilities =['role:partner','role:member'];
+			break;
+		case( 'member') : 
+			$avilities =['role:member'];
+			break;
+	}
+    return $user->createToken('authtoken' , $avilities)->plainTextToken;
+});
+/*
+Route::get('expiretoken', function (Request $request){
+	dd($request->user()->currentAccessToken()->delete;
+});
 
-Route::post('login', [CustomLoginController::class, 'store']);
-
+Route::get('gettoken', function (Request $request){
+	return $request->user()->createToken('loginToken',['check-status','place-orders'])->plainTextToken;
+});
+Route::get('testtoken', function (Request $request){
+	dd($request->user()->tokenCan('role:werver'));
+})->middleware(['auth:sanctum']);
+Route::get('/checktoken', function (Request $request) {
+	if ( $request->user()->id && $request->user()->tokenCan('role:access') ){
+		dd("OK");	
+	}
+	else dd("FALSE");
+})->middleware(['auth:sanctum','abilities:ordercheck']);
+*/
+Route::post('login', [CustomLoginController::class, 'store'])->name('login');
+Route::post('logout', [CustomLoginController::class, 'destroy']);
+Route::get('/getHolidays', 'App\Http\Controllers\CommonController@holidays');
 /* framework */
 Route::prefix('pages')->group(function () {
 	Route::get('/{page}' , [FrameworkController::class, 'showPage']);

@@ -21,11 +21,15 @@ class CustomLoginController extends Controller
 		$credentials['authtype'] = 'member';
 		
         if (Auth::guard('web')->attempt($credentials)) {
-            return $this->success();
+			
+			$token = Auth::user()->createToken('loginToken',['role:web']);
+            return $this->success(['token'=>$token->plainTextToken]);
+			
+			return $this->success();
         }
-  		else  return $this->error422('아이디 패스워드를 확인해주세요');
+  		else  return $this->error('아이디 패스워드를 확인해주세요',422);
 		
-        return redirect("login")->withSuccess('Login details are not valid');
+        //return redirect("login")->withSuccess('Login details are not valid');
 	}
 	function adminstore(Request $request){
 		$request->validate([
@@ -39,9 +43,9 @@ class CustomLoginController extends Controller
         if (Auth::guard('admin')->attempt($credentials)) {
             return $this->success();
         }
-  		else  return $this->error422('아이디 패스워드를 확인해주세요');
+  		else  return $this->error('아이디 패스워드를 확인해주세요',422);
 		
-        return redirect("login")->withSuccess('Login details are not valid');
+        //return redirect("login")->withSuccess('Login details are not valid');
 	}
 	
 	function partnerstore(Request $request){
@@ -65,7 +69,7 @@ class CustomLoginController extends Controller
         }else if ( Auth::guard('partner')->attempt($credentialsFrom) ) {
 			return $this->success();
 		}
-  		else  return $this->error422('아이디 패스워드를 확인해주세요');
+  		else  return $this->error('아이디 패스워드를 확인해주세요',422);
 	}
 	function partnerdestroy(Request $request){
 		Auth::guard('partner')->logout();

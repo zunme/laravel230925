@@ -14,6 +14,18 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::middleware('auth:sanctum','abilities:role:member')->prefix('web')->group(function () {
+	Route::get('user', function(Request $request){
+		return $request->user();
+	});
+});
+Route::middleware('auth:sanctum','abilities:role:partner')->prefix('partner')->group(function () {
+	Route::get('user', function(Request $request){
+		return $request->user();
+	});
+});
+Route::middleware('auth:sanctum','abilities:role:admin')->prefix('admin')->group(function () {
+	Route::get('user', function(Request $request){
+		return $request->user();
+	});
 });

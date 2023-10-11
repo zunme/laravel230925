@@ -1,4 +1,18 @@
 var $$ = Dom7;
+let _authToken = localStorage.authToken ?? ''
+const setAuthToken=(token)=>{
+	localStorage.authToken = token;
+	_authToken = token
+	setAxiosToken()
+}
+const setAxiosToken =()=>{
+	axios.defaults.headers.common['Authorization'] = `Bearer ${_authToken}`
+	hiddenAxios.defaults.headers.common['Authorization'] = `Bearer ${_authToken}`
+}
+const helperObjectToArray=( obj)=>{
+	return Object.keys(obj ).map(item => { return {'key':item, 'val':obj[item] } } );
+}
+
 routes.push(
 	{
         path: '(.*)',
@@ -38,6 +52,91 @@ routes.push(
         `,
     }
 );
+
+var app = new Framework7({
+    el: '#app',
+    theme:'ios',
+    colors: {
+    // specify primary color theme
+        primary: '#01d9a6'
+    },
+    // store.js,
+    // routes.js,
+    routes: routes,
+    pushState: true,
+	uniqueHistory: true,
+	
+    view: {
+        iosDynamicNavbar: false,
+        xhrCache: false,
+        cache: false,
+        componentCache:false,
+
+        stackPages: false,
+        pushState: true,
+        pushStateSeparator: '',
+        uniqueHistory: true,
+        history: true,
+        browserHistory : true,
+        browserHistorySeparator: '',
+
+    },
+    cache: false,
+        
+    panel: {
+        swipe: false,
+        //panel descktop 보이기
+        //visibleBreakpoint: 400,
+    },
+    popup: {
+        closeOnEscape: true,
+    },
+    sheet: {
+        closeOnEscape: true,
+    },
+    popover: {
+        closeOnEscape: true,
+    },
+    actions: {
+        closeOnEscape: true,
+    },
+    vi: {
+        placementId: 'pltd4o7ibb9rc653x14',
+    },
+    toast: {
+        closeTimeout: 1500,
+        closeButton: false,
+        destroyOnClose:true,
+    }
+	,on:{
+		init: function(){
+			_authToken = localStorage.authToken ?? ''
+			setAxiosToken()
+		},
+		routerAjaxStart: function(xhr, options){ pageLoaderShow() },
+        routerAjaxComplete: function(xhr, options){ pageLoaderHide() },
+		pageInit: function( page){
+			if( gtagid && gtagid != '' ){
+				const { href, pathname } = window.location;
+				/*
+				gtag('config', gtagid , {
+						page_title: page.route.name ?? 'oksusupay',
+						page_location: href,
+						page_path:  pathname //page.route.path
+				})
+				*/;
+				 gtag('event', 'page_view', {
+					page_title: page.route.name ?? 'oksusupay',
+					page_location: href,
+					page_path:  pathname //page.route.path
+				 });
+			}
+			
+		},
+
+	}
+});
+
 	/* framework7 전용 */
 const toastr = t=>{
         app.toast.create({
@@ -217,88 +316,6 @@ const joinChannel=()=>{
 function callCustEvent( type, data ){
     custEvents.emit( type , data )
 }
-
-
-var app = new Framework7({
-    el: '#app',
-    theme:'ios',
-    colors: {
-    // specify primary color theme
-        primary: '#01d9a6'
-    },
-    // store.js,
-    // routes.js,
-    routes: routes,
-    pushState: true,
-	uniqueHistory: true,
-	
-    view: {
-        iosDynamicNavbar: false,
-        xhrCache: false,
-        cache: false,
-        componentCache:false,
-
-        stackPages: false,
-        pushState: true,
-        pushStateSeparator: '',
-        uniqueHistory: true,
-        history: true,
-        browserHistory : true,
-        browserHistorySeparator: '',
-
-    },
-    cache: false,
-        
-    panel: {
-        swipe: false,
-        //panel descktop 보이기
-        //visibleBreakpoint: 400,
-    },
-    popup: {
-        closeOnEscape: true,
-    },
-    sheet: {
-        closeOnEscape: true,
-    },
-    popover: {
-        closeOnEscape: true,
-    },
-    actions: {
-        closeOnEscape: true,
-    },
-    vi: {
-        placementId: 'pltd4o7ibb9rc653x14',
-    },
-    toast: {
-        closeTimeout: 1500,
-        closeButton: false,
-        destroyOnClose:true,
-    }
-	,on:{
-		routerAjaxStart: function(xhr, options){ pageLoaderShow() },
-        routerAjaxComplete: function(xhr, options){ pageLoaderHide() },
-		pageInit: function( page){
-			if( gtagid ){
-				const { href, pathname } = window.location;
-				/*
-				gtag('config', gtagid , {
-						page_title: page.route.name ?? 'oksusupay',
-						page_location: href,
-						page_path:  pathname //page.route.path
-				})
-				*/;
-				 gtag('event', 'page_view', {
-					page_title: page.route.name ?? 'oksusupay',
-					page_location: href,
-					page_path:  pathname //page.route.path
-				 });
-			}
-			
-		},
-
-	}
-});
-
 	
 window.custEvents = new Framework7.Events;
 document.addEventListener("DOMContentLoaded", function(){

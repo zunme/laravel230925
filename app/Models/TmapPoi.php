@@ -23,6 +23,6 @@ class TmapPoi extends Model
 	*/
 	protected $primaryKey = 'pkey';
     public $incrementing = false;
-	protected $fillable = ['id','pkey','name','telno','frontLon','frontLat','crdnt','zipCode','upperAddrName','middleAddrName','lowerAddrName','detailAddrName','mlClass','firstNo','secondNo','roadName','firstBuildNo','secondBuildNo','poiobj'];
+	protected $fillable = ['id','pkey','name','telno','frontLon','frontLat','crdnt','sido_code','legalDongCode','zipCode','upperAddrName','middleAddrName','lowerAddrName','detailAddrName','mlClass','firstNo','secondNo','roadName','firstBuildNo','secondBuildNo','poiobj'];
 	protected $casts =['poiobj'=>'array','crdnt' => Point::class];
 }

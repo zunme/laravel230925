@@ -1,0 +1,72 @@
+body, body.base{
+	font-size:16px;
+	--f7-toolbar-font-size:14px;
+	--f7-list-font-size:14px;
+	--f7-calendar-day-font-size:12px;
+	--f7-calendar-today-text-color:blue;
+	--f7-calendar-header-padding: 0 24px;
+}
+body.sm{
+	font-size:14px;
+	--f7-toolbar-font-size:12px;
+	--f7-list-font-size:12px;
+}
+body.lg{
+	font-size:18px;
+	--f7-toolbar-font-size:16px;
+	--f7-list-font-size:16px;
+}
+body.xl{
+	font-size:20px;
+	--f7-toolbar-font-size:18px;
+	--f7-list-font-size:18px;
+}
+button{
+	width:auto;
+}
+.tw-border-init , .tw-border-init *, .tw-border-init :before, .tw-border-init :after {
+	box-sizing: border-box !important;
+	border-width: 0 !important;
+	border-style: solid !important;
+	border-color: #e5e7eb !important;
+	border: 0 solid #e5e7eb !important;
+}
+.tw-solid{
+	border-style: solid !important;
+}
+.nanumsquare{
+	font-family: 'NanumSquare';
+}
+.nanumsquare-bold{
+	font-family: 'NanumSquareBold';
+}
+.nanumsquare-extra-bold{
+	font-family: 'NanumSquareExtraBold';
+}
+select.tw-select:not([size]) {
+	background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg aria-hidden='true' xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 10 6'%3E%3Cpath stroke='%236B7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m1 1 4 4 4-4'/%3E%3C/svg%3E") !important;
+	background-position: right 0.75rem center !important;
+	background-repeat: no-repeat !important;
+	background-size: 0.75em 0.75em !important;
+	padding-right: 2.5rem !important;
+	-webkit-print-color-adjust: exact;
+	print-color-adjust: exact;
+}
+
+/* calcendar */
+.day-sun {
+    color: #f97b53;
+}
+.day-sat{
+	color: #2ec6d9;
+}
+.calendar-day-has-events {
+    color: red;
+}
+.calendar-day-today .calendar-day-number {
+    color: var(--f7-calendar-today-text-color,var(--f7-theme-color));
+    background-color: var(--f7-calendar-today-bg-color);
+}
+.calendar-day-events {
+    top: 0 !important;
+}
