@@ -2,7 +2,7 @@ tailwind.config ={
 	prefix: 'tw-',
 	theme: {
 		screens: {
-			sm: '480px',
+			sm: '640px',
 			md: '768px',
 			lg: '976px',
 			xl: '1440px',
@@ -325,6 +325,8 @@ tailwind.config ={
 				'900': '#264b82',
 				'950': '#1b2e50',
 			},
+			'mainbg': '#5145CD',
+			'mainfont': '#5145CD',
 
 		},
 		extend: {},

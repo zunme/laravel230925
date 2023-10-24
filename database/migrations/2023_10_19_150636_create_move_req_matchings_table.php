@@ -11,10 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('tmap_poi_caches', function (Blueprint $table) {
+        Schema::create('move_req_matchings', function (Blueprint $table) {
             $table->id();
-			$table->string('search');
-			$table->json('result');
+            $table->unsignedBigInteger('move_request_id')->index();
+            $table->unsignedBigInteger('partner_id');
+            $table->enum('notied',['N','P','Y'])->default('N');
             $table->timestamps();
         });
     }
@@ -24,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('tmap_poi_caches');
+        Schema::dropIfExists('move_req_matchings');
     }
 };

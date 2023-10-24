@@ -17,10 +17,14 @@ use App\Http\Controllers\Auth\CustomLoginController;
 use App\Http\Controllers\Front\FrameworkController;
 use App\Models\User;
 
+use App\Http\Controllers\CommonController;
+use App\Http\Controllers\Front\MoveController;
+
 Route::get('/', function () {
     return view('front.welcome');
 });
-Route::get('/test', 'App\Http\Controllers\TestdefaultController@tmappoi');
+//Route::get('/test', 'App\Http\Controllers\TestdefaultController@tmappoi');
+Route::get('/test', 'App\Http\Controllers\TestdefaultController@checkuser');
 Route::get('/sanctum/token', function (Request $request) {
 	$user = \Auth::user();
 	if( !$user ){
@@ -67,7 +71,11 @@ Route::get('/checktoken', function (Request $request) {
 */
 Route::post('login', [CustomLoginController::class, 'store'])->name('login');
 Route::post('logout', [CustomLoginController::class, 'destroy']);
+Route::get('checkuser', [CommonController::class,'checkAuthUser']);
 Route::get('/getHolidays', 'App\Http\Controllers\CommonController@holidays');
+
+Route::post('/move/reg', [MoveController::class,'store'] );
+
 /* framework */
 Route::prefix('pages')->group(function () {
 	Route::get('/{page}' , [FrameworkController::class, 'showPage']);

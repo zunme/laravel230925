@@ -40,4 +40,10 @@ class TestdefaultController extends Controller
 		];
 		dd($tmap->poiDistance($data, 'api'));
 	}
+	public function checkuser(){
+		$user = \Auth::guard('web')->user();
+		$partner = \Auth::guard('partner')->user();
+		$admin = \Auth::guard('admin')->user();
+		dd( compact(['user','partner','admin']));
+	}
 }

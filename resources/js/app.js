@@ -1,3 +1,3 @@
 import './bootstrap';
-import './echo';
-import './jquery';
+//import './echo';
+//import './jquery';

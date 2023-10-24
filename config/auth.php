@@ -78,7 +78,7 @@ return [
         ],
 		'partner' => [
             'driver' => 'eloquent',
-            'model' => App\Models\User::class,
+            'model' => App\Models\Partner::class,
         ],
         // 'users' => [
         //     'driver' => 'database',

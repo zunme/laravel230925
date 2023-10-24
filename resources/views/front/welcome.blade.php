@@ -1,6 +1,6 @@
 @php
 	$user = \Auth::guard('web')->user();
-	$assets_version = '20230925150002';
+	$assets_version = '20230925150003';
 @endphp
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}"
@@ -8,10 +8,11 @@
 	  style="
 		--white-shade : #dfdfdf
 		--f7-safe-area-bottom: 34px;font-size:16px;
-		--f7-navbar-bg-color-rgb : var(--f7-theme-color-rgb);
-		--f7-navbar-text-color:#fff;
-		--f7-navbar-height:48px;
-		--f7-navbar-link-color:#fff;
+		--f7-navbar-bg-color-rgb : 255,255,255;
+		--f7-bars-translucent-opacity : 1;
+		--f7-navbar-text-color:#444;
+		--f7-navbar-height:60px;
+		--f7-navbar-link-color:#444;
 		--f7-font-family: nanumsquare -apple-system, SF Pro Text, SF UI Text, system-ui, Helvetica Neue, Helvetica, Arial, sans-serif;
 		--f7-toolbar-font-size:14px;
 		--f7-list-font-size:14px;
@@ -52,7 +53,8 @@
         <meta property="og:url" content="{{$meta->url}}"/>
     @endif
         <meta name="keywords" content="{{ config('site.keywords', '') }}">
-        <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+		<!-- 강제 https-->
+        <!--meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests"-->
         
         <title>{{ config('app.name', 'app') }}</title>
 
@@ -67,7 +69,7 @@
 		<script src="/js/tailwind.ext.js?version={{$assets_version}}"></script>
 
 		@vite(['resources/css/app.css', 'resources/js/app.js'])
-		
+		<script src="/js/jquery-93b17483.js"></script>
 		<!-- GTAG -->
 		@if( config('site.gtag_id',null) )
 		<script async src="https://www.googletagmanager.com/gtag/js?id={{ config('site.gtag_id','') }}"></script>
@@ -87,7 +89,30 @@
 		
 		<!-- framework7 -->
 		<link rel="stylesheet" href="/css/framework7.css">
+
+		<link rel="stylesheet" href="/css/default.css?version={{$assets_version}}">
 		<style>
+			.noselect {
+				-webkit-touch-callout: none;
+				-webkit-user-select: none;
+				-khtml-user-select: none;
+				-moz-user-select: none;
+				-ms-user-select: none;
+				user-select: none;
+			}
+			.square {
+				position: relative;
+			}
+			.square:after {
+				content: "";
+				display: block;
+				padding-bottom: 100%;
+			}
+			.square .square-inner {
+				position: absolute;
+				width: 100%;
+				height: 100%;
+			}
 			button{
 				width:auto;
 			}
@@ -110,6 +135,30 @@
             .nanumsquare-extra-bold{
                 font-family: 'NanumSquareExtraBold';
             }
+			input.tw-input-search:not([size]) {
+				background-image:url('/images/mag.svg');
+				background-position: right 0.75rem center !important;
+				background-repeat: no-repeat !important;
+				background-size: 0.75em 0.75em !important;
+				padding-right: 2.5rem !important;
+				-webkit-print-color-adjust: exact;
+				print-color-adjust: exact;
+			}
+			.box-shadow {
+				--f7-elevation: 0px 3px 5px -1px rgba(0, 0, 0, 0.2),0px 5px 8px 0px rgba(0, 0, 0, 0.14),0px 1px 14px 0px rgba(0, 0, 0, 0.12);
+				box-shadow: var(--f7-elevation)!important;
+			}
+			@media (min-width: 601px) {
+				.sheet-modal.smart-select-sheet{
+					--f7-elevation: 0px 3px 5px -1px rgba(0, 0, 0, 0.2),0px 5px 8px 0px rgba(0, 0, 0, 0.14),0px 1px 14px 0px rgba(0, 0, 0, 0.12);
+					width: 600px;
+					left: 50%;
+					margin-left: -300px;
+					border: 1px solid #c9c9c9 !important;
+					box-shadow: var(--f7-elevation)!important;
+					border-bottom: none !important;
+				}
+			}
 		</style>
 		<script src="/js/framework7.custom.js"></script>
 		<!-- https://ant.design/components/overview/ -->
@@ -222,12 +271,37 @@
 					//beforeEnter:[checkAuth],
 					name: 'login',
 				},
+				{
+					path:'/login/required/:id',
+					async: function ({ app, to, resolve }) {
+						console.log(to);
+						fetch('/checkuser')
+							.then((res) => res.json())
+							.then(function (data) {
+								if( !data.data.logined){
+									resolve(
+										{
+											popup: {
+												closeByBackdropClick : true,
+												componentUrl: '/popup/view/login' ,
+											},
+										},
+									);
+								}else {
+									custEvents.emit('logined', null)
+								}
+							});
+					},
+					name: 'reg',
+				}
 			];
 			let logoimage ;
 			
 		</script>
 		<script src="/build/js/defaultjs.js?version={{$assets_version}}" defer></script>
 		<script src="/js/appinit.js?ver={{\Carbon\Carbon::now()->format('YmdHis')}}" defer></script>
+		<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+		<script src="/js/custom.js?ver={{\Carbon\Carbon::now()->format('YmdHis')}}"></script>
 	</body>
 </html>
 		

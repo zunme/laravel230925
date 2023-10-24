@@ -40,6 +40,6 @@ class AppServiceProvider extends ServiceProvider
     {
 		Carbon::useMonthsOverflow(false);
         Carbon::useYearsOverflow(false);
-		\URL::forceScheme('https');
+		#\URL::forceScheme('https');
     }
 }

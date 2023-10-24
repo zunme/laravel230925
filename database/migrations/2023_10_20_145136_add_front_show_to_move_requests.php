@@ -11,9 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('tmap_pois', function (Blueprint $table) {
-            $table->string('sido_code',2)->nullable()->after('crdnt');
-			$table->string('legalDongCode',11)->nullable()->after('sido_code');
+        Schema::table('move_requests', function (Blueprint $table) {
+            $table->enum('use_front',['N','Y'])->default('N')->after('noti');
         });
     }
 
@@ -22,9 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('tmap_pois', function (Blueprint $table) {
-            $table->dropColumn('sido_code');
-			$table->dropColumn('legalDongCode');
+        Schema::table('move_requests', function (Blueprint $table) {
+            $table->dropColumn('use_front');
         });
     }
 };

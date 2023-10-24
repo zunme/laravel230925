@@ -31,14 +31,14 @@ class FrameworkController extends Controller
 	}
 
 	public function showPopup(Request $request, $page){
-		$user = \Auth::guard('admin')->user();
+		$user = \Auth::guard('web')->user();
 		$data=[
 			'user'=>$user,
 			'pagename'=>$page,
 		];
-		return view('admin.popup.'.$page, $data);
+		return view('front.popup.'.$page, $data);
 	}
 	public function login(){
-		return view('admin.welcomelogin');
+		return view('front.welcomelogin');
 	}
 }

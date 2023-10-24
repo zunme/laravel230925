@@ -1,0 +1,254 @@
+<html>
+  <head>
+        <!-- Fonts -->
+        <link rel="preconnect" href="https://fonts.bunny.net">
+        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+        <script src="https://kit.fontawesome.com/483598c605.js" crossorigin="anonymous"></script>
+      <link href="https://hangeul.pstatic.net/hangeul_static/css/nanum-square.css" rel="stylesheet" />
+      
+      <!-- https://developer-1px.github.io/adorable-css/tutorial -->
+      <script src="/js/libraries.js?version={{$assets_version}}"></script>
+      <script src="/js/tailwind.ext.js?version={{$assets_version}}"></script>
+
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment-with-locales.min.js" integrity="sha512-42PE0rd+wZ2hNXftlM78BSehIGzezNeQuzihiBCvUEB3CVxHvsShF86wBWwQORNxNINlBPuq7rG4WWhNiTVHFg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/locale/ko.min.js" integrity="sha512-3kMAxw/DoCOkS6yQGfQsRY1FWknTEzdiz8DOwWoqf+eGRN45AmjS2Lggql50nCe9Q6m5su5dDZylflBY2YjABQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+      <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+      <script src="/js/jquery-93b17483.js"></script>
+
+      <!-- GTAG -->
+      <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  </head>
+  <body>
+    <!-- 3개월 달력 -->
+    <div x-data="{
+      open : false,
+      calendars : [],
+      today : moment(),
+      sonday : {},
+      selected_day : null,
+      selected_day_format : null,
+      getselected (){
+        return this.selected_day ? this.selected_day.format('YYYY-MM-DD') : ''
+      },
+      getSon(){
+        axios.get('/api/common/sondays').then( res => {
+          var temp=[]
+          for ( var item of res.data ){
+            temp[moment(item.date).format('YYYYMMDD') ] = true
+          }
+          this.sonday = temp;
+          this.makeData()
+        })
+      },
+      generate(date) {
+        const startday = date;
+        const startWeek = startday.clone().startOf('month').week();
+        const endWeek = startday.clone().endOf('month').week() === 1 ? 53 : startday.clone().endOf('month').week();
+        let calendar = [];
+        var yearMonth = {
+          year : startday.format('YYYY'),
+          month : startday.format('MM'),
+          calendar : []
+        }
+        for (let week = startWeek; week <= endWeek; week++) {
+          calendar.push(
+          Array(7)
+          .fill(0)
+          .map((n, i) => {
+            // 오늘 => 주어진 주의 시작 => n + i일 만큼 더해서 각 주의 '일'을 표기한다.
+              let current = startday
+              .clone()
+              .week(week)
+              .startOf('week')
+              .add(n + i, 'day');
+
+            // 오늘이 current와 같다면 우선 '선택'으로 두자
+              let isSelected = this.today.format('YYYYMMDD') === current.format('YYYYMMDD') ? 'today' : '';
+
+            // 만약, 이번 달이 아닌 다른 달의 날짜라면 회색으로 표시하자
+              //let isGrayed = current.format('MM') !== this.today.format('MM') ? 'grayed' : '';
+              let isGrayed = current < this.today ? 'disabled' : '';
+
+              let findevent = this.sonday[current.format('YYYYMMDD')] ?? false;
+              return {
+                  current:current,
+                  isSelected : isSelected,
+                  isGrayed : isGrayed,
+                  findevent : findevent,
+                  day : current.format('D')
+              }
+            })
+          )
+        }
+        yearMonth.calendar = calendar
+        this.calendars.push( yearMonth )
+      },
+      makeData(){
+        this.generate( moment() )
+        this.generate( moment().startOf('month').add(1, 'M') ) 
+        this.generate( moment().startOf('month').add(2, 'M') )
+        console.log ( this.calendars )
+      },
+      togglePop(){
+        this.open = !this.open
+      },
+      setDate(d){
+        if( d.isGrayed !='') return;
+        this.selected_day = d.current
+        this.selected_day_format = d.current.format('YYYY-MM-DD')
+        this.open = false
+      },
+      init(){
+        this.getSon();
+      }
+    }">
+      <input type="text" @click="togglePop()" x-model="selected_day_format" placeholder="이사일 검색" readonly/>
+      <template x-teleport="body">
+        <div x-show="open">
+          <div>
+            <div>
+              header
+            </div>
+            <div class="calendar-body">
+              <template x-for="cal in calendars">
+                <div  class="calendar-month-wrap">
+                  <div x-text="`${cal.year}-${cal.month}`"></div>
+                  <div class="calendar-month-body">
+                    <template x-for="row in cal.calendar">
+                      <div class="calendar-row tw-grid tw-grid-cols-7">
+                        <template x-for="col in row">
+                          <div class="calendar-day"  x-bind:class="[col.current == selected_day ? 'selected':'' , col.isSelected ?? '', col.isGrayed ?? '']" @click="setDate(col)">
+                            <div x-bind:class="[col.findevent ? 'son':'not-son']"></div>
+                            <div x-text="col.day"></div>
+                          </div>
+                        </template>
+                      </div>
+                    </template>
+                  </div>
+                </div>
+              </template>
+            </div>
+          </div>  
+        </div>
+      </template>
+    </div>
+
+
+  <!-- 주소검색 -->
+    <div x-data="{
+      open:false,
+      searchkey : 'devU01TX0FVVEgyMDIzMTAyMzE2Mzc0MjExNDE5ODg=',
+      searchstr : '',
+      searchlist : [],
+      selected : {},
+      search(){
+        var self = this
+        if( !this.checkSearchedWord( this.searchstr ) ) return 
+        searchlist = []
+        $.ajax({
+          url :'https://business.juso.go.kr/addrlink/addrLinkApiJsonp.do'
+          ,type:'post'
+          ,data:{
+            currentPage:1,
+            countPerPage:20,
+            resultType:'json',
+            confmKey : self.searchkey,
+            keyword : self.searchstr.trim()
+          }
+          ,dataType:'jsonp'
+          ,crossDomain:true
+          ,success:function(jsonStr){
+            var errCode = jsonStr.results.common.errorCode;
+            var errDesc = jsonStr.results.common.errorMessage;
+            if(errCode != '0'){
+              alert(errCode+'='+errDesc);
+            }else{
+              if(jsonStr != null){
+                self.makeListJson(jsonStr);
+              }
+            }
+          }
+          ,error: function(xhr,status, error){
+            alert('에러발생');
+          }
+        });
+      },
+      checkSearchedWord(str){
+        if(str.length >0){
+          //특수문자 제거
+          var expText = /[%=><]/ ;
+          if(expText.test(str) == true){
+            alert('특수문자를 입력 할수 없습니다.') ;
+            str = str.split(expText).join(''); 
+            return false;
+          }
+          
+          //특정문자열(sql예약어의 앞뒤공백포함) 제거
+          var sqlArray = new Array(
+            //sql 예약어
+            'OR', 'SELECT', 'INSERT', 'DELETE', 'UPDATE', 'CREATE', 'DROP', 'EXEC',
+                        'UNION',  'FETCH', 'DECLARE', 'TRUNCATE' 
+          );
+          
+          var regex;
+          for(var i=0; i<sqlArray.length; i++){
+            regex = new RegExp( sqlArray[i] ,'gi') ;
+            
+            if (regex.test(str) ) {
+                alert('\'' + sqlArray[i]+'\'와(과) 같은 특정문자로 검색할 수 없습니다.');
+                str =str.replace(regex, '');
+              return false;
+            }
+          }
+        }
+        return true ;
+      },
+      makeListJson(jsonStr){
+        console.log ( jsonStr )
+        this.searchlist = jsonStr.results.juso
+        console.log (this.searchlist)
+      },
+      select(item){
+        this.selected = item
+        this.searchlist =[]
+        this.searchstr=''
+        this.open = false;
+      }
+
+    }">
+      <div>
+        <input type="text" @click="open = !open" x-model="selected.roadAddr"  placeholder="주소 검색" readonly />
+        <input type="text" x-model="selected.admCd" />
+        <input type="text" x-model="selected.siNm" />
+        <input type="text" x-model="selected.sggNm" />
+        <input type="text" x-model="selected.zipNo" />
+        <template x-teleport="body">
+          <div x-show="open">
+            <div>
+              <input type="text" x-model="searchstr" @keydown.enter="search()">
+              <button type="button" @click="search()" >검색</button>
+              <span @click="open = false">X</span>
+            </div>
+            <div>
+              <template x-for="item in searchlist">
+                <div @click="select(item)">
+                  <div x-text="item.roadAddr"></div>
+                  <div x-text="item.jibunAddr"></div>
+                </div>
+              </template>
+            </div>
+          </div>
+        </template>
+      </div>
+    </div>
+
+    <script src="/build/js/defaultjs.js?version={{$assets_version}}" defer></script>
+		<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+		<script src="/js/custom.js?ver={{\Carbon\Carbon::now()->format('YmdHis')}}"></script>
+    <script>
+      const jusoapikey = "devU01TX0FVVEgyMDIzMTAyMzE2Mzc0MjExNDE5ODg="
+
+    </script>
+  </body>
+</html>
