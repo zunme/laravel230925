@@ -8,8 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class PartnerArea extends Model
 {
     use HasFactory;
-    protected $fillable = ['partner_id','avail_siCode','avail_sigunguCode'];
-    //protected $appends = ['area_label'];
+    protected $fillable = ['partner_id','avail_siCode','avail_sigunguCode','is_use'];
+    public $timestamps = false;
+    
+    protected $appends = ['area_label'];
+    
     // $p->append(['area_label']);
 
     public function getAreaLabelAttribute(){

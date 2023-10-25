@@ -4,11 +4,7 @@
           <section class="content-section">
                 <div class="block-title tw-mt-2 tw-mb-2">신청내역</div>
                 <div class="datatable-table1 table-length-hide table-filter-hide">
-                    <div  class="tw-flex tw-gap-2 tw-pl-[5px]">
-                        
-                        <my-search-inputs list=${inputSet}></my-search-inputs>
-                    </div>
-                    <form id="form_dist_search" @submit=${prevent}>
+                    <form id="form_{{$pagename}}_search" @submit=${prevent}>
                         <div class="tw-flex tw-gap-5 tw-justify-end newsearchwrap tw-border-init">
 
                             <div  class="tw-flex tw-gap-2 tw-pl-[5px]">
@@ -103,6 +99,7 @@
                                 <th>도착주소</th>
                                 <th>도착층</th>
                                 <th>보관</th>
+                                <th>리뷰</th>
                                 <th>작성일</th>
                             </tr>
                         </thead>
@@ -136,14 +133,46 @@
         store.dispatch('clear')
         console.log ( flashdata.value)
         let inputSet = [
-			{'type':'text', 'name':'created_at','label':'등록일'},
+            {'type':'date', 'name':'created_at','label':'등록일'},
+            {'type':'date', 'name':'move_date','label':'이사일'},
+            {'type':'select', 'name':'confirmed','label':'진행상태',
+				'options':[
+					{val:'', label:'전체'},
+					{val:'Ready', label:'신청'},
+					{val:'Matching' , label:'진행중'},
+				]
+			},
+            {'type':'select', 'name':'searchtype','label':'',
+				'options':[
+					{val:'move_requests.name', label:'이름'},
+					{val:'move_requests.tel', label:'전화번호'},
+					{val:'move_requests.from_address' , label:'출발주소'},
+                    {val:'move_requests.move_requests.to_address' , label:'도착주소'},
+				]
+			},
+			{'type':'text', 'name':'searchstr','placeholder':'검색어'},
         ]
 
         var datatable, datatableapi;
 	    var datatable_id ='{{$pagename}}_datatable';
         var datatable_url = "/api/djemals/requestlist";
         var params = getUrlParams();
-        
+
+        if (!window.changeFrontView) {
+            window.changeFrontView = function(e) {
+                 var data = {
+                    '_method' : 'PUT',
+                    'is_use_front' : ( $(e.target).prop('checked') ) ? 'N' : 'Y',
+
+                 }
+                 var id = $(e.target).val()
+                 axios.post( `/api/djemals/usefront/${id}`, data ).then( res=>{
+                    $(e.target).prop( 'checked', !$(e.target).prop('checked') )
+                    toastr("변경하였습니다");
+                })
+                return false;
+            };
+        };
         const reloadtable = ()=> {
             datatable.ajax.reload(null,false);
         }
@@ -180,7 +209,7 @@
                 "ajax": {
                     'url' : datatable_url,
                     'data' : function (data){
-                        var frm_data = $("#form_dist_search").serializeArray();
+                        var frm_data = $("#form_{{$pagename}}_search").serializeArray();
                         $.each(frm_data, function(key, val) {
                             data[val.name] = val.value;
                         });
@@ -203,11 +232,14 @@
                             if( data =='N') checked=` checked `
                             
                             return `
-                                <input type="checkbox" name="fronts[]" value="${row.id}" data-oldval="${data}" ${checked}/>
+                                <input type="checkbox" name="fronts[]" readonly value="${row.id}" data-oldval="${data}" ${checked}/>
                             `
                         }
                     },
-                    {"data" : "move_type_label",name:"move_requests.move_type", className: "","searchable": false,orderable: false, visible:true},
+                    {"data" : "move_type_label",name:"move_requests.move_type", className: "","searchable": false,orderable: false, visible:true
+                        
+                    },
+
                     {"data" : "req_status",name:"move_requests.req_status", className: "","searchable": false,orderable: false, visible:true
                         , render: function ( data, type, row, meta ) {
                             return `<a href="/djemals/popup/reqinfo/${row.id}">${data}</a>`
@@ -243,7 +275,11 @@
                         }
                     },
                     {"data" : "keep",name:"move_requests.keep", className: "","searchable": false,orderable: false, visible:true},
-                    
+                    {"data" : "review",name:"review.id", className: "tw-hidden md:tw-table-cell","searchable": false,orderable: true, visible:true
+                        , render: function ( data, type, row, meta ) {
+                            return `<a href="/djemals/popup/reviewadd/${row.id}">${row.review ? 'Y':'N'}</a>`
+                        }
+                    },
 
                     {"data" : "created_at",name:"move_requests.created_at", className: "tw-hidden md:tw-table-cell","searchable": false,orderable: true, visible:true
                         , render: function ( data, type, row, meta ) {
@@ -271,7 +307,7 @@
                             }
                         } );                        
                     }, 300);
-                    //jQuery(`#${datatable_id}`).on('click', 'a.search-child', searchDistChild );
+                    jQuery(`#${datatable_id}`).on('click', 'input[name="fronts[]"]', changeFrontView );
                     //jQuery(`#${datatable_id}`).on('click', 'a.changePct', openPctPop );
                 },
             });
@@ -287,6 +323,7 @@
             console.log( "before out")
             app.popup.close()
             app.dialog.close()
+            jQuery(`#${datatable_id}`).off('click', 'input[name="fronts[]"]', changeFrontView );
             //jQuery('#form_dist_search input[name="searchstr"]').unbind();
             //jQuery('#form_agency_search input[name="searchstr"]').unbind();
             jQuery(`#${datatable_id}`).off('click', 'tr', changeRowColor );

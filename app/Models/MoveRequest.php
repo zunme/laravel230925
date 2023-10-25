@@ -35,6 +35,9 @@ class MoveRequest extends Model
     public function user(){
 		return $this->belongsTo(User::class, 'user_id', 'id');
 	}
+    public function review(){
+        return $this->hasOne(Review::class, 'move_request_id', 'id');
+    }
     protected $dispatchesEvents = [
         'created' => MoveReqEvent::class,
     ];

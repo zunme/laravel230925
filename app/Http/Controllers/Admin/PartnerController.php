@@ -18,7 +18,26 @@ use App\Models\PartnerArea;
 class PartnerController extends Controller
 {
     public function index(Request $request){
-        $data = Partner::select('partners.*');
+        if( !config('site.use_sigungu',false) ){
+            $data = Partner::
+                with([
+                    'availarea'=>function($q){
+                        return $q->where(['is_use'=>'Y'])->whereNull('avail_sigunguCode');
+                    }
+                ])
+                ->select('partners.*');
+        }else{
+            $data = Partner::
+            with([
+                'availarea'=>function($q){
+                    return $q->select('avail_siCode','partner_id',DB::raw("count(1) as cnt") )
+                        ->where(['is_use'=>'Y'])
+                        ->whereNotNull('avail_sigunguCode')
+                        ->groupBy('partner_id','avail_siCode');
+                }
+            ])
+            ->select('partners.*');
+        }
         if( $request->sidoCode ){
             $sido = PartnerArea::select('partner_id')->where('avail_siCode',$request->sidoCode)->pluck('partner_id');
             $data->whereIn('id', $sido);

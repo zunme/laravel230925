@@ -4,7 +4,7 @@
           <section class="content-section">
                 <div class="block-title tw-mt-2 tw-mb-2">파트너 리스트</div>
                 <div class="datatable-table1 table-length-hide table-filter-hide">
-                    <form id="form_dist_search" @submit=${prevent}>
+                    <form id="form_{{$pagename}}_search" @submit=${prevent}>
                         <div class="tw-flex tw-gap-5 tw-justify-end newsearchwrap tw-border-init">
                             <div  class="tw-flex tw-gap-2 tw-pl-[5px]">
                                 <select  class="tw-flex tw-justify-between tw-select tw-bg-gray-300/50 tw-border tw-border-gray-300 
@@ -55,6 +55,10 @@
                         <thead>
                             <tr>
                                 <th>No</th>
+                                <th>아이디</th>
+                                <th>이름</th>
+                                <th>전화번호</th>
+                                <th>지역</th>
                             </tr>
                         </thead>
                     </table>
@@ -138,7 +142,7 @@
                 "ajax": {
                     'url' : datatable_url,
                     'data' : function (data){
-                        var frm_data = $("#form_dist_search").serializeArray();
+                        var frm_data = $("#form_{{$pagename}}_search").serializeArray();
                         $.each(frm_data, function(key, val) {
                             data[val.name] = val.value;
                         });
@@ -156,6 +160,26 @@
                     {"data" : "id",name:"id", className: "tw-hidden md:tw-table-cell","searchable": false,orderable: true, visible:true
                         , render: function ( data, type, row, meta ) {
                             return data ?? ''
+                        }
+                    },
+                    {"data" : "userid",name:"userid", className: "","searchable": false,orderable: true, visible:true},
+                    {"data" : "name",name:"name", className: "","searchable": false,orderable: true, visible:true},
+                    {"data" : "tel",name:"tel", className: "","searchable": false,orderable: true, visible:true},
+                    {"data" : "availarea",name:"availarea.id", className: "tw-min-w-[170px] ","searchable": false,orderable: true, visible:true
+                        , render: function ( data, type, row, meta ) {
+                            areas = ''
+                            if( !data || data.length==0) areas = `<span class="tw-py-1 tw-px-2 tw-bg-gray-500 tw-text-white tw-rounded tw-text-xs">지역설정없음</span>`
+                            else {
+                                for ( var area of data ){
+                                    var cnt = (area.cnt ? `(${area.cnt})`:'')
+                                    areas += `<span class="tw-py-1 tw-px-2 tw-bg-gray-500 tw-text-white tw-rounded tw-text-xs" data-areaid="${area.id}">
+                                            ${area.area_label}
+                                            ${cnt}
+                                        </span>`
+                                    console.log ( areas )
+                                }
+                            }
+                            return `<a href="/djemals/popup/partnerarea/${row.id}" class="tw-flex tw-flex-wrap tw-gap-1">${areas}</a>`
                         }
                     },
                 ],
@@ -189,7 +213,7 @@
         $$on('pageAfterIn', (e, page) => {
             drawDtTable()
             jQuery(`#${datatable_id}`).on('click', 'tr', changeRowColor );
-            //custEvents.on("dist_change", reloadtable )
+            custEvents.on("areaChanged", reloadtable )
         })
         $$on('pageBeforeOut',()=>{
             app.popup.close()
@@ -199,7 +223,7 @@
             jQuery(`#${datatable_id}`).off('click', 'tr', changeRowColor );
             //jQuery(`#${datatable_id}`).off('click', 'a.changePct', openPctPop );
             datatable.destroy()
-            //custEvents.off("dist_change", reloadtable )
+            custEvents.off("areaChanged", reloadtable )
         })
         return $render;
     }

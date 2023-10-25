@@ -27,6 +27,8 @@ class Controller extends BaseController
         'data' => $data,
       ], $code,['Pragma'=> 'no-cache','Cache-Control'=> 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0']);
     }
-	
+    protected function getSidoCodeWithGungu( $code ){
+        return substr($code, 0, 2);
+    }
 	
 }

@@ -20,7 +20,7 @@ class FrameworkController extends Controller
 		if( !$user ) return view('admin.login');
 		$data=[
 			'user'=>$user,
-			'pagename'=>$page . ($sub) ?"_{$sub}":'',
+			'pagename'=>$page . (($sub) ?"_{$sub}":''),
 		];
 		$page =['admin',$page];
 		if( $sub )$page[] = $sub;

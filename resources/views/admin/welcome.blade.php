@@ -379,6 +379,9 @@
 		$$(e.target).closest('tr').addClass('selectedRow')
 		selectedRow = $$(e.target).closest('tr').attr('id')
 	}
+	const isset = (val, arr)=>{
+        return typeof arr[val] =='boolean' ? true : false
+    }
 	Framework7.registerComponent(
 		'my-search-inputs',
 		(props, { $h }) => {
@@ -395,8 +398,7 @@
 			}
 			
 			return () => $h`
-	<div class="list ">
-		<ul>
+	<div class="tw-flex tw-justify-end tw-gap-2">
 		${props.list.map( item =>$h`
 			${item.type=='hidden' ? $h`
 				<input type="hidden" 
@@ -404,17 +406,49 @@
 					name="${item.name}" />
 			`:''}
 			${item.type=='text' || item.type=='password' || item.type=='number' ? $h`
-				<div>123</div>
+				<div class="relative">
+					${item.label ? $h`
+						<div class="floating-label absolute tw-text-xs">${item.label}</div>
+					`:''}
+					<!-- class : tw-input-search -->
+					<input class="tw-cal tw-bg-gray-300/50 tw-border tw-border-gray-300 
+						tw-text-gray-900 tw-text-sm tw-rounded-lg tw-block tw-min-w-[200px] tw-px-[10px]
+						tw-py-[6px]" 
+						type="${item.type}"
+						placeholder="${item.placeholder ?? ''}"
+						name="${item.name}" />
+				</div>
 			`:''}
 			
 			${item.type=='select' ? $h`
-			<div>123</div>
+				<div class="relative">
+					${item.label ? $h`
+						<div class="floating-label absolute tw-text-xs">${item.label}</div>
+					`:''}
+					<select class="tw-flex tw-justify-between tw-select tw-bg-gray-300/50 tw-border tw-border-gray-300 
+								tw-text-gray-900 tw-text-sm tw-rounded-lg tw-block tw-min-w-[140px] tw-px-[10px] tw-py-[6px]"
+						name="${item.name}"
+						>
+						${item.options.map(opt=>$h`
+							<option value="${opt.val ?? ''}" selected=${opt.val== pathIndex(item.name) } >${opt.label ?? '선택해주세요'}</option>
+						`)}
+					</select>
+				</div>
 			`:''}
 			${item.type=='date' || item.type=='datetime' ? $h`
-				<div>123</div>
+				<div class="relative">
+					${item.label ? $h`
+						<div class="floating-label absolute tw-text-xs">${item.label}</div>
+					`:''}
+					<input class="tw-cal tw-bg-gray-300/50 tw-border tw-border-gray-300 
+							tw-text-gray-900 tw-text-sm tw-rounded-lg tw-block tw-min-w-[140px]
+							tw-px-[10px] tw-py-[6px]"
+						type="${item.type}" 
+						name="${item.name}" 
+						placeholder="${item.placeholder ?? ''}"/>
+				</div>
 			`:''}
 		`)}
-		</ul>
 	</div>
 			`
 		}
@@ -605,6 +639,37 @@ Framework7.registerComponent(
 							`:$h`
 								<span class="input-clear-button"></span>
 							`}
+						</div>
+					</div>
+				</li>
+			`:''}
+			${item.type=='textarea' ? $h`
+				<li class="item-content item-input item-input-outline ${item.class_li ?? ''}">
+					${item.hidemedia ? '':$h`
+					<div class="item-media">
+						${ !item.hasOwnProperty('icon') ? $h`
+						<i class="fa-solid fa-square tw-text-xl tw-text-stone-500"></i>
+						`:$h`
+							${ !item.icon.ico ? $h`
+								${ (item.readonly || item.disabled) ? $h`
+									<i class="fa-solid fa-square-xmark tw-text-xl tw-text-stone-500 ${item.icon.class??''}"></i>
+								`:$h`
+									${ (item.required) ? $h`
+										<i class="fa-solid fa-square tw-text-xl tw-text-sky-800 ${item.icon.class??''}"></i>
+									`:$h`
+										<i class="fa-solid fa-square tw-text-xl tw-text-sky-300 ${item.icon.class??''}"></i>
+									`}
+								`}
+							`:$h`
+								${item.icon.ico}
+							`}
+						`}
+					</div>
+					`}
+					<div class="item-inner ${item.class_item_innder ?? ''}">
+						<div class="item-title item-label">${item.label ?? ''}</div>
+						<div class="item-input-wrap tw-p-[10px] ${ item.click ? $h`tw-flex`:''} ${item.class_input_wrap ?? ''} ${item.type=='file' ? 'tw-flex tw-item-center':''} ">
+							<textarea name="" name="${item.name}">${ data[item.name] ?? ''}</textarea>
 						</div>
 					</div>
 				</li>

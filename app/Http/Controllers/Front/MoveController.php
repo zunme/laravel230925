@@ -54,7 +54,6 @@ class MoveController extends Controller
         $formValidate['to_sigungu'] = $to_data['sigungu'];
         $formValidate['to_siCode'] = substr($to_data['sigunguCode'],0,2);
         $formValidate['to_sigunguCode'] = $to_data['sigunguCode'];
-        
         MoveRequest::create($formValidate);
         if( !$user ) return $this->success(['login_need'=>true, 'data'=>$formValidate]);
         else return $this->success();
