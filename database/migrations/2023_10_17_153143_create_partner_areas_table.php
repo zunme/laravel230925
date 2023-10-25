@@ -14,8 +14,9 @@ return new class extends Migration
         Schema::create('partner_areas', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('partner_id');
-            $table->tinyInteger('avail_siCode');
-            $table->tinyInteger('avail_sigunguCode')->nullable();
+            $table->string('avail_siCode',5);
+            $table->string('avail_sigunguCode',8)->nullable();
+            $table->enum('is_use',['Y','N'])->default('Y');
             $table->foreign('partner_id')->references('id')->on('partners')->onDelete('cascade');
         });
     }
