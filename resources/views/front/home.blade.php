@@ -42,40 +42,44 @@ $random = \Str::random('8');;
 							<label>
 								<input type="radio" name="move_type" value="1" class="radiobox-radio"  data-required="이사유형을 선택해주세요"  required/>
 								<div class="radiobox vbox pack tw-rounded-lg">
-									<i class="fa-solid fa-house"></i>
+									<!--i class="fa-solid fa-house"></i-->
+									<img src="/icons/icon_home.png" />
 									<div class="tw-mt-2 tw-text-center">
 										<div class="tw-text-sm tw-font-semibold">1톤이상의</div>
-										<div class="tw-text-base tw-font-bold">가정이사</div>
+										<div class="tw-text-lg tw-font-bold">가정이사</div>
 									</div>
 								</div>
 							</label>
 							<label>
 								<input type="radio" name="move_type" value="1" class="radiobox-radio" />
 								<div class="radiobox vbox pack tw-rounded-lg">
-									<i class="fa-solid fa-building"></i>
+									<!--i class="fa-solid fa-building"></i-->
+									<img src="/icons/icon_office.png" />
 									<div class="tw-mt-2 tw-text-center">
 										<div class="tw-text-sm tw-font-semibold">회사, 공장, 병원 등</div>
-										<div class="tw-text-base tw-font-bold">사무실이사</div>
+										<div class="tw-text-lg tw-font-bold">사무실이사</div>
 									</div>
 								</div>
 							</label>
 							<label>
 								<input type="radio" name="move_type" value="1" class="radiobox-radio" />
 								<div class="radiobox vbox pack tw-rounded-lg">
-									<i class="fa-solid fa-house-user"></i>
+									<!--i class="fa-solid fa-house-user"></i-->
+									<img src="/icons/icon_oneroom.png" />
 									<div class="tw-mt-2 tw-text-center">
 										<div class="tw-text-sm tw-font-semibold">1톤 이하</div>
-										<div class="tw-text-base tw-font-bold">원룸이사</div>
+										<div class="tw-text-lg tw-font-bold">원룸이사</div>
 									</div>
 								</div>
 							</label>
 							<label>
 								<input type="radio" name="move_type" value="1" class="radiobox-radio" />
 								<div class="radiobox vbox pack tw-rounded-lg">
-									<i class="fa-solid fa-truck-ramp-box"></i>
+									<!--i class="fa-solid fa-truck-ramp-box"></i-->
+									<img src="/icons/icon_keep.png" />
 									<div class="tw-mt-2 tw-text-center">
 										<div class="tw-text-sm tw-font-semibold">안전하고 깔끔한</div>
-										<div class="tw-text-base tw-font-bold">보관이사</div>
+										<div class="tw-text-lg tw-font-bold">보관이사</div>
 									</div>
 								</div>
 							</label>
@@ -268,18 +272,25 @@ $random = \Str::random('8');;
 	.radiobox-radio + .radiobox{
 		background-color:#eee;
 		border:1px solid #ddd !important;
+		color:#555;
 	}
 	.radiobox-radio:checked + .radiobox{
-		background-color:#14b8a6;
-		border:1px solid #0f766e !important;
-		color:white;
+		background-color:#afcffb;
+		border:1px solid #94b8eb !important;
+		color:#333;
+	}
+	.radiobox > img {
+		max-width:100px;
+	}
+	.calendar-day-next, .calendar-day-prev {
+		color: #858585 !important;
 	}
 	.calendar-day-disabled {
 		color: var(--f7-calendar-disabled-text-color) !important;
 		cursor: auto;
 	}
 	.calendar-day-has-events {
-		color: inherit;
+		/*color: inherit;*/
 	}
 
 	.caneldar-footer-dot{
@@ -425,6 +436,7 @@ $random = \Str::random('8');;
 					footer: true,
 					dateFormat:`yyyy-mm-dd`,
 					events: sonDays,
+					
 					rangesClasses: [
 						 {
 							// string CSS class name for this range in "cssClass" property
@@ -444,8 +456,9 @@ $random = \Str::random('8');;
 						},
 					],
 					
-					disabled:{
-						to: moment().toDate()
+					disabled: function (date) {
+						return !moment(date).isBetween( moment().add(1,'days'), moment().add(2,'months'))
+	
 					},
 					
 					renderToolbar:function(){
