@@ -76,6 +76,10 @@ Route::get('/getHolidays', 'App\Http\Controllers\CommonController@holidays');
 
 Route::post('/move/reg', [MoveController::class,'store'] );
 
+Route::prefix('svelte')->group(function () {
+	Route::get('/', 'App\Http\Controllers\SvelteController@index');
+});
+
 /* framework */
 Route::prefix('pages')->group(function () {
 	Route::get('/{page}' , [FrameworkController::class, 'showPage']);
