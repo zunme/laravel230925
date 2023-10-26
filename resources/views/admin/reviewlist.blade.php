@@ -2,26 +2,18 @@
     <div class="page mainpage page-{{$pagename}}">
       <div class="page-content" style="font-size:14px;">
           <section class="content-section">
-                <div class="block-title tw-mt-2 tw-mb-2">파트너 리스트</div>
+                <div class="block-title tw-mt-2 tw-mb-2">신청내역</div>
                 <div class="datatable-table1 table-length-hide table-filter-hide">
                     <form id="form_{{$pagename}}_search" @submit=${prevent}>
                         <div class="tw-flex tw-gap-5 tw-justify-end newsearchwrap tw-border-init">
+
                             <div  class="tw-flex tw-gap-2 tw-pl-[5px]">
                                 <select  class="tw-flex tw-justify-between tw-select tw-bg-gray-300/50 tw-border tw-border-gray-300 
-                                tw-text-gray-900 tw-text-sm tw-rounded-lg tw-block tw-w-full tw-px-[10px] tw-py-[6px]" 
-                                    name="sidoCode" @change=${redraw} >
-                                    <option value="">지역</option>
-                                    ${Object.keys(sidoCodes).map( item =>$h`
-                                        <option value="${item}">${sidoCodes[item]}</option>
-                                    `)}
+                                tw-text-gray-900 tw-text-sm tw-rounded-lg tw-block tw-w-full tw-min-w-[100px] tw-px-[10px] tw-py-[6px]" name="searchtype">
+                                    <!--option value="users.userid">아이디</option-->
+                                    <option value="move_requests.name">이름</option>
+                                    <option value="move_requests.tel">전화번호</option>
                                 </select>
-                                <select  class="tw-flex tw-justify-between tw-select tw-bg-gray-300/50 tw-border tw-border-gray-300 
-                                tw-text-gray-900 tw-text-sm tw-rounded-lg tw-block tw-w-full tw-px-[10px] tw-py-[6px]" name="searchtype">
-                                    <option value="partners.userid">아이디</option>
-                                    <option value="partners.name">이름</option>
-                                    <option value="partners.tel">전화번호</option>
-                                </select>
-                               
                                 <input 
                                     class="tw-input-search tw-cal tw-bg-gray-300/50 tw-border tw-border-gray-300 
 								           tw-text-gray-900 tw-text-sm tw-rounded-lg tw-block tw-min-w-[200px] tw-px-[10px] tw-py-[6px]" 
@@ -42,10 +34,9 @@
                                 >
                                 <i class="fa-solid fa-rotate-right"></i>
                             </a>
-                            <a href="/djemals/popup/addrequest" class="tw-cal tw-bg-white tw-text-blue-900
+                            <a href="/djemals/popup/reviewadd" class="tw-cal tw-bg-white tw-text-blue-900
                                     tw-border tw-border-gray-300 
                                     tw-text-sm tw-rounded-lg tw-inline-block tw-w-auto tw-px-[10px] tw-py-[6px]"
-                                    @click=${reloadtable}
                                 >
                                 <i class="fa-solid fa-plus"></i>
                             </a>
@@ -55,10 +46,12 @@
                         <thead>
                             <tr>
                                 <th>No</th>
-                                <th>아이디</th>
+                                <th>홈보이기</th>
                                 <th>이름</th>
-                                <th>전화번호</th>
-                                <th>지역({{ config('site.use_sigungu') ? '군/구' : '시/도'}})</th>
+                                <th>이사유형</th>
+                                <th>점수</th>
+                                <th>Review</th>
+                                <th>작성일</th>
                             </tr>
                         </thead>
                     </table>
@@ -68,20 +61,11 @@
     </div>
   </template>
   <style>
-		.content-section{
-			padding:10px;
-		}
-		.table-length-hide .dataTables_length{
-			display:none;
-		}
-		.table-filter-hide .dataTables_filter{
-			display:none;
-		}
-	  .floating-label{
+    .floating-label{
         position: absolute;
         z-index: 1;
         background-color: rgb(171 171 171 / 90%);
-        top: -12px;
+        top: -8px;
         left: 14px;
         padding: 0px 5px;
         border-radius: 2px;
@@ -95,16 +79,15 @@
         var $$f7 = ctx.$f7;
         var $$onMounted = ctx.$onMounted;
         var $$on = ctx.$on;
-
+        var front_review_only_checked = {{config('site.front_review_only_checked') ? 'true':'false'}};
         var flashdata = store.getters.flash
         store.dispatch('clear')
-        console.log( flashdata.value )
-
-        var sidoCodes = @json( config("customsido.simple"));
+        console.log ( flashdata.value)
 
         var datatable, datatableapi;
 	    var datatable_id ='{{$pagename}}_datatable';
-        var datatable_url = "/api/djemals/partner";
+        var datatable_url = "/api/djemals/review";
+        var params = getUrlParams();
 
         const reloadtable = ()=> {
             datatable.ajax.reload(null,false);
@@ -150,36 +133,38 @@
                     },
                     error: function (xhr, error, code) {
                         if( xhr.status == '401'){
-                            window.location.reload()
+                            //window.location.reload()
+                            app.dialog.alert("[오류] 데이터를 가져올수 없습니다",'code : 401');
                         }else{
                             app.dialog.alert("[오류] 데이터를 가져올수 없습니다",'ADMIN');
                         }
                     }
                 },
                 "columns" : [
-                    {"data" : "id",name:"id", className: "tw-hidden md:tw-table-cell","searchable": false,orderable: true, visible:true
+                    {"data" : "id",name:"id", className: "md:tw-table-cell tw-w-[60px]","searchable": false,orderable: true, visible:true
                         , render: function ( data, type, row, meta ) {
-                            return data ?? ''
+                            return `<a href="/djemals/popup/reviewadd/0/${data}" class="tw-w-full tw-block">${data}</a>`
                         }
                     },
-                    {"data" : "userid",name:"userid", className: "","searchable": false,orderable: true, visible:true},
-                    {"data" : "name",name:"name", className: "","searchable": false,orderable: true, visible:true},
-                    {"data" : "tel",name:"tel", className: "","searchable": false,orderable: true, visible:true},
-                    {"data" : "availarea",name:"availarea.id", className: "tw-min-w-[170px] ","searchable": false,orderable: true, visible:true
+                    {"data" : "use_front",name:"use_front", className: "tw-w-[60px]","searchable": false,orderable: false, visible:true
                         , render: function ( data, type, row, meta ) {
-                            areas = ''
-                            if( !data || data.length==0) areas = `<span class="tw-py-1 tw-px-2 tw-bg-gray-500 tw-text-white tw-rounded tw-text-xs">지역설정없음</span>`
+                            if( front_review_only_checked ) return data;
                             else {
-                                for ( var area of data ){
-                                    var cnt = (area.cnt ? `(${area.cnt})`:'')
-                                    areas += `<span class="tw-py-1 tw-px-2 tw-bg-gray-500 tw-text-white tw-rounded tw-text-xs" data-areaid="${area.id}">
-                                            ${area.area_label}
-                                            ${cnt}
-                                        </span>`
-                                    console.log ( areas )
-                                }
+                                return `전체(${data})`
                             }
-                            return `<a href="/djemals/popup/partnerarea/${row.id}" class="tw-flex tw-flex-wrap tw-gap-1">${areas}</a>`
+                        }
+                    },
+                    {"data" : "name",name:"name", className: "tw-w-[100px]","searchable": false,orderable: false, visible:true},
+                    {"data" : "move_type_label",name:"move_type", className: "tw-w-[100px]","searchable": false,orderable: false, visible:true},
+                    {"data" : "star_point",name:"star_point", className: "tw-w-[60px]","searchable": false,orderable: false, visible:true},
+                    {"data" : "comment",name:"comment", className: "","searchable": false,orderable: false, visible:true
+                        , render: function ( data, type, row, meta ) {
+                            return `<textarea class="tw-w-full">${data}</textarea>`
+                        }
+                    },
+                    {"data" : "write_at",name:"write_at", className: "tw-hidden md:tw-table-cell tw-w-[80px]","searchable": false,orderable: true, visible:true
+                        , render: function ( data, type, row, meta ) {
+                            return dateFormat(data)
                         }
                     },
                 ],
@@ -203,7 +188,6 @@
                             }
                         } );                        
                     }, 300);
-                    //jQuery(`#${datatable_id}`).on('click', 'a.search-child', searchDistChild );
                     //jQuery(`#${datatable_id}`).on('click', 'a.changePct', openPctPop );
                 },
             });
@@ -213,18 +197,19 @@
         $$on('pageAfterIn', (e, page) => {
             drawDtTable()
             jQuery(`#${datatable_id}`).on('click', 'tr', changeRowColor );
-            custEvents.on("areaChanged", reloadtable )
+            custEvents.on("reviewChanged", reloadtable )
         })
         $$on('pageBeforeOut',()=>{
+            console.log( "before out")
             app.popup.close()
             app.dialog.close()
-            //jQuery('#form_dist_search input[name="searchstr"]').unbind();
-            //jQuery('#form_agency_search input[name="searchstr"]').unbind();
             jQuery(`#${datatable_id}`).off('click', 'tr', changeRowColor );
-            //jQuery(`#${datatable_id}`).off('click', 'a.changePct', openPctPop );
             datatable.destroy()
-            custEvents.off("areaChanged", reloadtable )
+            custEvents.off("reviewChanged", reloadtable )
         })
+        $$on('pageAfterOut',()=>{
+            
+        });
         return $render;
     }
   </script>  

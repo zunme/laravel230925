@@ -66,6 +66,7 @@
         app.dialog.confirm('저장하시겠습니까?',app_name, function(){
             axios.post('/api/djemals/review',formdata).then(res=>{
                 toastr('저장하였습니다')
+                custEvents.emit('reviewChanged',{})
                 app.popup.close()
             })
         })
@@ -77,6 +78,7 @@
             formdata.append("_method", "put");
             axios.post(`/api/djemals/review/${info.id}`,formdata).then(res=>{
                 toastr('수정하였습니다')
+                custEvents.emit('reviewChanged',{} )
                 app.popup.close()
             })
         })
@@ -100,7 +102,6 @@
         movetype_options.push({val:key,label:movetype[key].title})
     }
 	let inputSet = [
-            {'type':'hidden', 'name':'user_id'},
             {'type':'hidden', 'name':'move_request_id'},
             {'type':'select', 'name':'move_type','label':'이사유형','disabled':false,'readonly':false, 'required':true, 'icon':{'ico':null, 'class':''}
                 ,'options':movetype_options
@@ -110,15 +111,30 @@
                 ,'options':star_points
             },
             {'type':'date', 'name':'write_at','label':'작성일','disabled':false,'readonly':false, 'required':true, 'icon':{'ico':null, 'class':''}},
+            {'type':'select', 'name':'use_front','label':'프론트 보이기','disabled':false,'readonly':false, 'required':true, 'icon':{'ico':null, 'class':''}
+                ,'options':[
+                    {'val':'Y', 'label':'노출'},
+                    {'val':'N', 'label':'비노출'}
+                ]
+            },
             {'type':'textarea', 'name':'comment','label':'내용','disabled':false,'readonly':false, 'required':true,hidemedia:true,},
 		]
  
     function getData(){
-        if( typeof props.id != 'undefined'){
+        console.log (typeof props.subid)
+        if( typeof props.id != 'undefined' && props.id>0){
             axios.get(`/api/djemals/reqreview/${props.id}`).then(res=>{
                 info = res.data.data
                 $update();
             })
+        }else if( typeof props.subid != 'undefined' && props.subid>0){
+            axios.get(`/api/djemals/review/${props.subid}`).then(res=>{
+                info = res.data.data
+                $update();
+            })
+        }else {
+            info = []
+            $update();
         }
     }
 

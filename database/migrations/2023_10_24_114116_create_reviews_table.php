@@ -15,9 +15,12 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('move_request_id')->nullable()->index();
             $table->unsignedBigInteger('user_id')->nullable()->index();
+            $table->unsignedBigInteger('partner_id')->nullable()->index();
             $table->string('name',20)->nullable();
             $table->tinyInteger('move_type')->default(1);
             $table->tinyInteger('star_point')->default(5);
+            $table->enum('use_front',['Y','N'])->default('N');
+            $table->enum('is_view',['Y','N'])->default('Y');
             $table->date('write_at');
             $table->text('comment')->nullable();
             $table->timestamps();

@@ -37,7 +37,12 @@ Route::middleware('auth:sanctum','abilities:role:admin')->prefix('admin')->group
 
 Route::prefix('common')->group(function () {
 	Route::get('sondays', [CommonController::class, 'sondays']);
+	
+	Route::get('/review', [CommonController::class, 'getReview']);	
+	Route::get('/req', [CommonController::class, 'getReqList']);
+	Route::get('/front', [CommonController::class, 'getFront']);
 });
+
 Route::get('/sigungu', [CommonController::class, 'sigungu']);
 /* admin */
 //Route::get('/djemals/requestlist', [AdminRequest::class, 'list']);

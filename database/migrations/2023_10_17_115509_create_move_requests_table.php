@@ -24,17 +24,17 @@ return new class extends Migration
             $table->string('from_zip',6)->nullable();
             $table->string('from_address')->nullable();
             $table->string('from_floor',10)->nullable();
-            $table->tinyInteger('from_siCode')->nullable()->index();
+            $table->string('from_siCode',5)->nullable()->index();
             $table->string('from_sido',40)->nullable();
-            $table->smallInteger('from_sigunguCode')->nullable();
+            $table->string('from_sigunguCode',8)->nullable();
             $table->string('from_sigungu',60)->nullable();
             
             $table->string('to_zip',6)->nullable();
             $table->string('to_address')->nullable();
             $table->string('to_floor',10)->nullable();
-            $table->tinyInteger('to_siCode')->nullable();
+            $table->string('to_siCode',5)->nullable();
             $table->string('to_sido',40)->nullable();
-            $table->smallInteger('to_sigunguCode')->nullable();
+            $table->string('to_sigunguCode',8)->nullable();
             $table->string('to_sigungu',60)->nullable();
 
             $table->enum('keep',['N','Y'])->default('N');

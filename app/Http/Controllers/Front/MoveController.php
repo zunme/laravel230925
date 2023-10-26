@@ -49,11 +49,46 @@ class MoveController extends Controller
         $formValidate['from_sigungu'] = $from_data['sigungu'];
         $formValidate['from_siCode'] = substr($from_data['sigunguCode'],0,2);
         $formValidate['from_sigunguCode'] = $from_data['sigunguCode'];
+        $formValidate['from_bcode'] = $from_data['bcode'];
 
         $formValidate['to_sido'] = $to_data['sido'];
         $formValidate['to_sigungu'] = $to_data['sigungu'];
         $formValidate['to_siCode'] = substr($to_data['sigunguCode'],0,2);
         $formValidate['to_sigunguCode'] = $to_data['sigunguCode'];
+        $formValidate['to_bcode'] = $to_data['bcode'];
+
+        //TODO
+        /*
+        if( !$user && (!$request->name || !$request->tel) ){
+            return $this->success([],'Unauthorized');
+        }
+        if( !$user ){
+            $userinfo = $request->validate([
+                    'name'=>'bail|required|string',
+                    'tel'=>'bail|required|string',
+                ],[
+                    "name.*"=>"이름을 적어주세요",
+                    "move_date.*"=>"전화번호를 적어주세요",
+                ],[]
+            );
+        }else {
+            $userinfo = [
+                'user_id'=>$user->id,
+                'name'=>$user->name,
+                'tel'=>$user->tel
+            ];
+        }
+        
+        $dup = MoveRequest::where(
+            [
+                'tel'=>$userinfo->tel,
+                'from_bcode'=>$formValidate['from_bcode'],
+                'to_bcode'=>$formValidate['to_bcode'],
+                'move_date'=>$formValidate['move_date'],
+            ]
+        )->first();
+        abort_if( $dup ,422,'이미 이사정보를 등록하셨습니다.');
+        */
         MoveRequest::create($formValidate);
         if( !$user ) return $this->success(['login_need'=>true, 'data'=>$formValidate]);
         else return $this->success();

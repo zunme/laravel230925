@@ -18,10 +18,16 @@ use App\Models\MoveRequest;
 class ReviewController extends Controller
 {
     public function index(Request $request){
-
+        $data = Review::select('*');
+        if( $request->searchstr && $request->searchtype){
+            $data->where($request->searchtype , 'like',"%{$request->searchstr}%");
+        }
+        return DataTables::eloquent($data)
+		->toJson();
     }
     public function show($review_id){
-        
+        $data = Review::find( $review_id );
+        if( $data ) return $this->success($data);
     }
     function store(Request $request){
         $formValidate = $request->validate([
@@ -30,6 +36,7 @@ class ReviewController extends Controller
             'move_type'=>'bail|required|integer',
             'name'=>'bail|required|string',
             'star_point'=>'bail|required|integer|min:1|max:5',
+            'use_front'=>'bail|nullable|in:Y,N',
             'write_at'=>'bail|nullable|date',
             'comment'=>'bail|required|string',
         ],[
@@ -50,6 +57,7 @@ class ReviewController extends Controller
         }catch(Exception $e){
             return $this->error( $e->getMessage());
         }
+        \Cache::store('file')->forget( "front_data_cache");
         return $this->success();
     }
     function update(Request $request, $id){
@@ -72,6 +80,7 @@ class ReviewController extends Controller
         }catch(Exception $e){
             return $this->error( $e->getMessage());
         }
+        \Cache::store('file')->forget( "front_data_cache");
         return $this->success();
     }
     public function reqshow($move_id){

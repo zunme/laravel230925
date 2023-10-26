@@ -4,6 +4,7 @@
 	$menu = [
 		["url"=>'request','title'=>'신청내역'],
 		["url"=>"partner",'title'=>'파트너'],
+		['url'=>'review','title'=>'리뷰'],
 	];
 
 @endphp
@@ -316,6 +317,11 @@
 					componentUrl: '/djemals/pages/partnerlist',
 					name: 'partnerlist',
 				},
+				{
+					path: '/djemals/review',
+					componentUrl: '/djemals/pages/reviewlist',
+					name: 'reviewlist',
+				},
 					//기본팝업
 				{
 					path: '/djemals/popup/:type',
@@ -331,7 +337,13 @@
 						componentUrl: '/djemals/popup/view/{{type}}' ,
 					},
 				},
-
+				{
+					path: '/djemals/popup/:type/:id/:subid',
+					popup: {
+						closeByBackdropClick : true,
+						componentUrl: '/djemals/popup/view/{{type}}' ,
+					},
+				},
 			];
 			@endverbatim
 			let logoimage ;

@@ -55,6 +55,7 @@ class RequestController extends Controller
             $data = MoveRequest::findOrFail($id);
             $data->use_front = $request->is_use_front;
             $data->save();
+            \Cache::store('file')->forget( "front_data_cache");
         } catch (ModelNotFoundException $exception) {
             return $this->error('찾는 정보가 없습니다.',404);
         } catch(Exception $e ){

@@ -100,6 +100,7 @@
                                 <th>도착층</th>
                                 <th>보관</th>
                                 <th>리뷰</th>
+                                <th>알림</th>
                                 <th>작성일</th>
                             </tr>
                         </thead>
@@ -162,7 +163,7 @@
             window.changeFrontView = function(e) {
                  var data = {
                     '_method' : 'PUT',
-                    'is_use_front' : ( $(e.target).prop('checked') ) ? 'N' : 'Y',
+                    'is_use_front' : ( $(e.target).prop('checked') ) ? 'Y' : 'N',
 
                  }
                  var id = $(e.target).val()
@@ -229,7 +230,7 @@
                     {"data" : "use_front",name:"move_requests.use_front","searchable": false,orderable: true, visible:true
                         , render: function ( data, type, row, meta ) {
                             var checked=''
-                            if( data =='N') checked=` checked `
+                            if( data =='Y') checked=` checked `
                             
                             return `
                                 <input type="checkbox" name="fronts[]" readonly value="${row.id}" data-oldval="${data}" ${checked}/>
@@ -240,7 +241,7 @@
                         
                     },
 
-                    {"data" : "req_status",name:"move_requests.req_status", className: "","searchable": false,orderable: false, visible:true
+                    {"data" : "req_status_label",name:"move_requests.req_status_label", className: "","searchable": false,orderable: false, visible:true
                         , render: function ( data, type, row, meta ) {
                             return `<a href="/djemals/popup/reqinfo/${row.id}">${data}</a>`
                         }
@@ -280,7 +281,7 @@
                             return `<a href="/djemals/popup/reviewadd/${row.id}">${row.review ? 'Y':'N'}</a>`
                         }
                     },
-
+                    {"data" : "matching_cnt",name:"move_requests.matching_cnt", className: "","searchable": false,orderable: false, visible:true},
                     {"data" : "created_at",name:"move_requests.created_at", className: "tw-hidden md:tw-table-cell","searchable": false,orderable: true, visible:true
                         , render: function ( data, type, row, meta ) {
                             return dateTimeFormat(data)

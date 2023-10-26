@@ -17,16 +17,24 @@ class MoveRequest extends Model
         'move_type','move_date',
         'from_zip','from_address','from_floor','from_siCode','from_sido','from_sigunguCode','from_sigungu',
         'to_zip','to_address','to_floor','to_siCode','to_sido','to_sigunguCode','to_sigungu',
-        'keep','noti','matched_partner_id'];
+        'keep','noti','matched_partner_id',
+        'from_bcode','to_bcode'
+
+    ];
 	protected $casts = [
         'move_date' => 'date',
     ];
-    protected $appends = ['move_type_label'];
+    protected $appends = ['move_type_label','req_status_label'];
 
     public function getMoveTypeLabelAttribute(){
         $move_type = config('site.move_type');
         if( isset($move_type[$this->move_type]) ) return $move_type[$this->move_type]['title'];
         else return $this->move_type;
+    }
+    public function getReqStatusLabelAttribute(){
+        $status = config('site.req_status');
+        if( isset($status[$this->req_status]) ) return $status[$this->req_status];
+        else return $this->req_status;
     }
     public function scopeAvail(){
         return $this->where('move_date', '>=', carbon::now()->setTimezone('Asia/Seoul'))

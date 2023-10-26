@@ -42,7 +42,7 @@ class PartnerAreaController extends Controller
                 ->whereNotIn('avail_siCode',$avail)
                 ->update(['is_use'=>'N']);
             foreach( $avail as $code){
-                $row = PartnerArea::where(['partner_id'=> $partner_id,'avail_siCode'=>$code])->first();
+                $row = PartnerArea::where(['partner_id'=> $partner_id,'avail_siCode'=>$code])->whereNull('avail_sigunguCode')->first();
                 if( $row ) {
                     if($row->is_use !='Y') {
                         $row->update(['is_use'=>'Y']);
@@ -64,7 +64,7 @@ class PartnerAreaController extends Controller
                         $row->update(['is_use'=>'Y']);
                     }
                 }else {
-                    $sido_cd = $this->getSidoCodeWithGungu($code);
+                    $sido_cd = getSiGunGuCode($code,'sido');
                     PartnerArea::create( ['partner_id'=> $partner_id,'avail_siCode'=>$sido_cd,'avail_sigunguCode'=>$code] );
                 }
             }

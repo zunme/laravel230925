@@ -18,6 +18,13 @@
             'desc'=>'안전하고 깔끔한'
         ],
     ],
+    'req_status'=>[
+        'Ready'=>'신규접수',
+        'Matching'=>'진행중',
+    ],
     'use_sigungu'=>false,
+    'front_review_only_checked' => false, 
+    'front_review_cnt' => 9,
+    'front_reqlist_cnt'=>20,
  ];
  ?>
