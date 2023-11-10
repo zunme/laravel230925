@@ -27,7 +27,10 @@ class FrameworkController extends Controller
 		$viewfile = implode('.', $page);
 		if (view()->exists( $viewfile) ) {
 			return view( $viewfile, $data);	
-		}else return view('front.home', $data);
+		}else {
+			$data['pagename'] = 'home';
+			return view('front.home', $data);
+		}
 	}
 
 	public function showPopup(Request $request, $page){

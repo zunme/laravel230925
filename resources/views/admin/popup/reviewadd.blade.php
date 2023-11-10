@@ -110,6 +110,8 @@
             {'type':'select', 'name':'star_point','label':'점수','disabled':false,'readonly':false, 'required':true, 'icon':{'ico':null, 'class':''}
                 ,'options':star_points
             },
+            {'type':'text', 'name':'area','label':'지역','disabled':false,'readonly':false, 'required':true, 'icon':{'ico':null, 'class':''}},
+            {'type':'date', 'name':'move_date','label':'이사일','disabled':false,'readonly':false, 'required':true, 'icon':{'ico':null, 'class':''}},
             {'type':'date', 'name':'write_at','label':'작성일','disabled':false,'readonly':false, 'required':true, 'icon':{'ico':null, 'class':''}},
             {'type':'select', 'name':'use_front','label':'프론트 보이기','disabled':false,'readonly':false, 'required':true, 'icon':{'ico':null, 'class':''}
                 ,'options':[

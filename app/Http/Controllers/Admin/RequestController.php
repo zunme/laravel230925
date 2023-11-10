@@ -63,4 +63,48 @@ class RequestController extends Controller
         }
         return $this->success(['id'=>$data->id, 'use_front'=>$data->use_front]);
     }
+    public function update(Request $request, $id){
+        try {
+            $data = MoveRequest::findOrFail($id);
+        } catch (ModelNotFoundException $exception) {
+            return $this->error('찾는 정보가 없습니다.',404);
+        } catch(Exception $e ){
+            return $this->error( $e->getMessage());
+        }
+
+        $formValidate = $request->validate([
+			'move_date'=>'bail|required|date',
+            'req_status'=>'bail|required',
+            'from_floor'=>'bail|required|numeric',
+            'to_floor'=>'bail|required|numeric',
+            'keep'=>'bail|nullable',
+        ],[
+            "move_type.*"=>"이사유형(가정이사, 원룸이사등)을 선택해주세요",
+			"move_date.*"=>"이사일을 선택해주세요",
+            'req_status.*'=>'진행상태를 선택해주세요',
+            "from_zip.*"=>"출발지 주소를 검색해주세요",
+            "from_floor.*"=>"출발지 층수를 선택해주세요",
+            "to_zip.*"=>"도착지 주소를 검색해주세요",
+            "to_floor.*"=>"도착지 층수를 선택해주세요",
+
+            "to_data.*"=>"출발지 주소를 검색해주세요",
+            "from_data.*"=>"도착지 주소를 검색해주세요",
+        ],[]
+        );
+        $data->update( $formValidate);
+        \Cache::store('file')->forget( "front_data_cache");
+        return $this->success();
+    }
+    public function destroy($id){
+        try {
+            $data = MoveRequest::findOrFail($id);
+            $data->delete();
+        } catch (ModelNotFoundException $exception) {
+            return $this->error('찾는 정보가 없습니다.',404);
+        } catch(Exception $e ){
+            return $this->error( $e->getMessage());
+        }
+        \Cache::store('file')->forget( "front_data_cache");
+        return $this->success();
+    }
 }

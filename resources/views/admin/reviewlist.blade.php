@@ -49,6 +49,8 @@
                                 <th>홈보이기</th>
                                 <th>이름</th>
                                 <th>이사유형</th>
+                                <th>지역</th>
+                                <th>이사일</th>
                                 <th>점수</th>
                                 <th>Review</th>
                                 <th>작성일</th>
@@ -156,6 +158,12 @@
                     },
                     {"data" : "name",name:"name", className: "tw-w-[100px]","searchable": false,orderable: false, visible:true},
                     {"data" : "move_type_label",name:"move_type", className: "tw-w-[100px]","searchable": false,orderable: false, visible:true},
+                    {"data" : "area",name:"area", className: "tw-w-[100px]","searchable": false,orderable: false, visible:true},
+                    {"data" : "move_date",name:"move_date", className: "tw-w-[100px]","searchable": false,orderable: false, visible:true
+                        , render: function ( data, type, row, meta ) {
+                            return dateFormat(data)
+                        }
+                    },
                     {"data" : "star_point",name:"star_point", className: "tw-w-[60px]","searchable": false,orderable: false, visible:true},
                     {"data" : "comment",name:"comment", className: "","searchable": false,orderable: false, visible:true
                         , render: function ( data, type, row, meta ) {

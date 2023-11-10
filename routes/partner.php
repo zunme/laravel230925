@@ -3,7 +3,11 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+use App\Http\Controllers\Auth\CustomLoginController;
 use App\Http\Controllers\Partner\FrameworkController;
+
+Route::post('login', [CustomLoginController::class, 'partnerstore'])->name('partner.login');
+Route::post('logout', [CustomLoginController::class, 'partnerdestroy']);
 
 Route::middleware('cache.headers:no_store')->group(function(){
 	/* framework */

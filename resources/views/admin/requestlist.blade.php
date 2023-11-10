@@ -73,13 +73,13 @@
                                 >
                                 <i class="fa-solid fa-rotate-right"></i>
                             </a>
-                            <a href="/djemals/popup/addrequest" class="tw-cal tw-bg-white tw-text-blue-900
+                            <!--a href="/djemals/popup/addrequest" class="tw-cal tw-bg-white tw-text-blue-900
                                     tw-border tw-border-gray-300 
                                     tw-text-sm tw-rounded-lg tw-inline-block tw-w-auto tw-px-[10px] tw-py-[6px]"
                                     @click=${reloadtable}
                                 >
                                 <i class="fa-solid fa-plus"></i>
-                            </a>
+                            </a-->
                         </div>
                     </form>
                     <table id="{{$pagename}}_datatable" class="display" style="width:100%;">
@@ -318,7 +318,7 @@
         $$on('pageAfterIn', (e, page) => {
             drawDtTable()
             jQuery(`#${datatable_id}`).on('click', 'tr', changeRowColor );
-            //custEvents.on("dist_change", reloadtable )
+            custEvents.on("moveInfoChanged", reloadtable )
         })
         $$on('pageBeforeOut',()=>{
             console.log( "before out")
@@ -330,7 +330,7 @@
             jQuery(`#${datatable_id}`).off('click', 'tr', changeRowColor );
             //jQuery(`#${datatable_id}`).off('click', 'a.changePct', openPctPop );
             datatable.destroy()
-            //custEvents.off("dist_change", reloadtable )
+            custEvents.off("moveInfoChanged", reloadtable )
         })
         $$on('pageAfterOut',()=>{
             

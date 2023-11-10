@@ -57,10 +57,20 @@ class MoveController extends Controller
         $formValidate['to_sigunguCode'] = $to_data['sigunguCode'];
         $formValidate['to_bcode'] = $to_data['bcode'];
 
-        //TODO
+        /* TODO 재매칭 sido & gungu */
         /*
-        if( !$user && (!$request->name || !$request->tel) ){
-            return $this->success([],'Unauthorized');
+        $tempfrom = getMoveDong( $formValidate['from_bcode'], 'from');
+        if( $tempfrom ) {
+            $formValidate = array_merge( $formValidate, $tempfrom);
+        }
+        $tempfrom = getMoveDong( $formValidate['to_bcode'], 'to');
+        if( $tempfrom ) {
+            $formValidate = array_merge( $formValidate, $tempfrom);
+        }
+        */
+
+        if(  $request->ispop=='false' && (!$request->name || !$request->tel) ){
+            return $this->success(["from"=>$formValidate],'Unauthorized');
         }
         if( !$user ){
             $userinfo = $request->validate([
@@ -73,23 +83,40 @@ class MoveController extends Controller
             );
         }else {
             $userinfo = [
-                'user_id'=>$user->id,
                 'name'=>$user->name,
                 'tel'=>$user->tel
             ];
         }
         
+        $agree = $request->validate([
+            'agree1'=>'bail|required|in:true',
+            'agree2'=>'bail|required|in:true',
+            'agree3'=>'bail|required|in:true',
+            'agree4'=>'bail|nullable|in:true,false',
+        ],[
+            "agree1.*"=>"필수사항에 동의해주세요",
+            "agree2.*"=>"필수사항에 동의해주세요",
+            "agree3.*"=>"필수사항에 동의해주세요",
+            "agree4.*"=>"잘못된 동의 값입니다.",
+        ],[]
+    );
+
         $dup = MoveRequest::where(
             [
-                'tel'=>$userinfo->tel,
+                'tel'=>$userinfo['tel'],
                 'from_bcode'=>$formValidate['from_bcode'],
                 'to_bcode'=>$formValidate['to_bcode'],
                 'move_date'=>$formValidate['move_date'],
             ]
         )->first();
         abort_if( $dup ,422,'이미 이사정보를 등록하셨습니다.');
-        */
-        MoveRequest::create($formValidate);
+        $ins = array_merge( $formValidate, [
+            'user_id'=> $user ? $user->id : null,
+            'name'=>$userinfo['name'],
+            'tel'=>$userinfo['tel'],            
+            'agree'=>$agree['agree4']=='true' ? 'Y':'N',
+        ]);
+        MoveRequest::create($ins);
         if( !$user ) return $this->success(['login_need'=>true, 'data'=>$formValidate]);
         else return $this->success();
     }

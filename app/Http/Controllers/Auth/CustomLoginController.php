@@ -73,8 +73,10 @@ class CustomLoginController extends Controller
 	}
 	function partnerdestroy(Request $request){
 		Auth::guard('partner')->logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
+		return $this->success();
+	}
+	function admindestroy(Request $request){
+		Auth::guard('admin')->logout();
 		return $this->success();
 	}
 }

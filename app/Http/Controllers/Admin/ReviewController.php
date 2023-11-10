@@ -30,26 +30,34 @@ class ReviewController extends Controller
         if( $data ) return $this->success($data);
     }
     function store(Request $request){
+        if($request->move_request_id ){
+            $cnt = Review::where([
+                    'move_request_id'=>$request->move_request_id,
+                    'is_view'=>'Y'
+                ])->count();
+            abort_if($cnt>0 ,422, '이미 리뷰가 작성되었습니다');
+        }
+
         $formValidate = $request->validate([
             'user_id'=>'bail|nullable|integer',
 			'move_request_id'=>'bail|nullable|integer',
             'move_type'=>'bail|required|integer',
             'name'=>'bail|required|string',
             'star_point'=>'bail|required|integer|min:1|max:5',
-            'use_front'=>'bail|nullable|in:Y,N',
-            'write_at'=>'bail|nullable|date',
+            'use_front'=>'bail|required|in:Y,N',
+            'area'=>'bail|required|string',
+            'move_date'=>'bail|required|date',
+            'write_at'=>'bail|required|date',
             'comment'=>'bail|required|string',
         ],[
             "move_type.*"=>"이사유형(가정이사, 원룸이사등)을 선택해주세요",
 			"write_at.*"=>"작성일을 선택해주세요",
             "star_point.*"=>"올바른 별점을 선택해주세요",
             "comment.*"=>"리뷰를 작성해주세요",
+            "move_date.*"=>"이사일 작성해주세요",
+            "area.*"=>"지역을 작성해주세요",
         ],[]
         );
-        if($formValidate['move_request_id'] ){
-            $cnt = Review::where('move_request_id',$formValidate['move_request_id'])->count();
-            abort_if($cnt>0 ,422, '이미 리뷰가 작성되었습니다');
-        }
         
         try{
             if(!$formValidate['write_at']) $formValidate['write_at'] = Carbon::now();
@@ -65,6 +73,8 @@ class ReviewController extends Controller
             'move_type'=>'bail|required|integer',
             'name'=>'bail|required|string',
             'star_point'=>'bail|required|integer|min:1|max:5',
+            'move_date'=>'bail|nullable|date',
+            'write_at'=>'bail|nullable|date',
             'write_at'=>'bail|nullable|date',
             'comment'=>'bail|required|string',
         ],[
@@ -72,6 +82,8 @@ class ReviewController extends Controller
 			"write_at.*"=>"작성일을 선택해주세요",
             "star_point.*"=>"올바른 별점을 선택해주세요",
             "comment.*"=>"리뷰를 작성해주세요",
+            "move_date.*"=>"이사일 작성해주세요",
+            "area.*"=>"지역을 작성해주세요",
         ],[]
         );
         try{

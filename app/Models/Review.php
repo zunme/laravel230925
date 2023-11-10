@@ -9,10 +9,11 @@ class Review extends Model
 {
     use HasFactory;
     protected $fillable =['move_request_id','user_id','name','move_type','star_point','write_at','comment'
-            ,'use_front','is_view'
+            ,'use_front','is_view','area','move_date'
         ];
     protected $casts = [
         'write_at' => 'date',
+        'move_date' => 'date',
     ];
     protected $appends = ['move_type_label'];
 

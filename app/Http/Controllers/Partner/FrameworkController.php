@@ -12,12 +12,13 @@ class FrameworkController extends Controller
 {
 	protected $prefix = 'partner';
 	public function showIndex(){
-		$user = \Auth::guard('web')->user();
-		if( !$user ) return view($this->prefix.'.welcome');
-		return view($this->prefix.'.welcome');
+		$user = \Auth::guard($this->prefix=='front' ? 'web': $this->prefix)->user();
+		//if( !$user ) return view($this->prefix.'.welcome');
+		return view($this->prefix.'.welcome',compact(['user']));
 	}
 	public function showPage(Request $request, $page, $sub=null){
-		$user = \Auth::guard('web')->user();
+		$user = \Auth::guard($this->prefix=='front' ? 'web': $this->prefix)->user();
+		if( !$user ) return view($this->prefix.'.login');
 		$data=[
 			'user'=>$user,
 			'pagename'=>$page . ($sub) ?"_{$sub}":'',
@@ -28,7 +29,10 @@ class FrameworkController extends Controller
 		$viewfile = implode('.', $page);
 		if (view()->exists( $viewfile) ) {
 			return view( $viewfile, $data);	
-		}else return view($this->prefix.'.home', $data);
+		}else {
+			$data['pagename'] = 'home';
+			return view($this->prefix.'.home', $data);
+		}
 	}
 
 	public function showPopup(Request $request, $page){

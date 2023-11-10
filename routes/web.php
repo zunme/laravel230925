@@ -20,9 +20,7 @@ use App\Models\User;
 use App\Http\Controllers\CommonController;
 use App\Http\Controllers\Front\MoveController;
 
-Route::get('/', function () {
-    return view('front.welcome');
-});
+
 //Route::get('/test', 'App\Http\Controllers\TestdefaultController@tmappoi');
 Route::get('/test', 'App\Http\Controllers\TestdefaultController@checkuser');
 Route::get('/sanctum/token', function (Request $request) {
@@ -83,10 +81,17 @@ Route::prefix('pages')->group(function () {
 });
 Route::get('/popup/view/{page}' , [FrameworkController::class, 'showPopup']);
 
+
+
+Route::get('/v2', 'App\Http\Controllers\Front\HomeController@index');
+
+
 Route::get('/', [FrameworkController::class, 'showIndex']);
 Route::get('/{ctname}', [FrameworkController::class, 'showIndex']);
 Route::get('/{ctname}/{id}', [FrameworkController::class, 'showIndex']);
 Route::get('/{ctname}/{id}/{fnname}', [FrameworkController::class, 'showIndex']);
 Route::get('/{ctname}/{id}/{fnname}/{idsub}', [FrameworkController::class, 'showIndex']);
+
+
 
 require __DIR__.'/auth.php';

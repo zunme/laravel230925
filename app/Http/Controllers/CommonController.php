@@ -81,7 +81,8 @@ class CommonController extends Controller
     }
     protected function getReviewData(){
         return Review::activefront()
-        ->select('name','move_type','star_point','write_at','comment')
+        ->select('move_type','star_point','write_at','area','comment','created_at','move_date')
+        ->addSelect( \DB::raw("REGEXP_REPLACE(name, '(?<=.{1}).', '*') AS name_marked"))
         ->orderBy('write_at','desc')->limit( config('site.front_review_cnt', 9))->get();
     }
     public function getReqList(){
@@ -91,12 +92,15 @@ class CommonController extends Controller
         return MoveRequest::select(
                 \DB::raw("CONCAT( LEFT(`name`,1),'**') AS `name`"),
                 'req_status','move_type','move_date',
-                'from_sido','from_sigungu'
+                'from_sido','from_sigungu','from_siCode','to_siCode'
             )
             ->where('use_front','Y')
             ->limit(config('site.front_review_cnt', 20) )->get();
     }
     public function getFront(){
+        return $this->success( $this->getFrontData() );
+    }
+    public function getFrontData(){
         $data = \Cache::store('file')->remember( "front_data_cache", 600, function(){
             $data = [];
             $data['review'] = $this->getReviewData();
@@ -104,6 +108,6 @@ class CommonController extends Controller
             $data['cached'] = Carbon::now()->toDateTimeString();
             return $data;
         });
-        return $this->success( $data );
+        return $data;
     }
 }

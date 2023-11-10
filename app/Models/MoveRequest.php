@@ -18,13 +18,13 @@ class MoveRequest extends Model
         'from_zip','from_address','from_floor','from_siCode','from_sido','from_sigunguCode','from_sigungu',
         'to_zip','to_address','to_floor','to_siCode','to_sido','to_sigunguCode','to_sigungu',
         'keep','noti','matched_partner_id',
-        'from_bcode','to_bcode'
+        'from_bcode','to_bcode', 'agree'
 
     ];
 	protected $casts = [
         'move_date' => 'date',
     ];
-    protected $appends = ['move_type_label','req_status_label'];
+    protected $appends = ['move_type_label','req_status_label','from_sido_label','to_sido_label'];
 
     public function getMoveTypeLabelAttribute(){
         $move_type = config('site.move_type');
@@ -36,6 +36,18 @@ class MoveRequest extends Model
         if( isset($status[$this->req_status]) ) return $status[$this->req_status];
         else return $this->req_status;
     }
+
+    public function getFromSidoLabelAttribute(){
+        $codes = config('customsido.simple');
+        if( isset($codes[$this->from_siCode]) ) return $codes[$this->from_siCode];
+        else return $this->from_sido;
+    }
+    public function getToSidoLabelAttribute(){
+        $codes = config('customsido.simple');
+        if( isset($codes[$this->to_siCode]) ) return $codes[$this->to_siCode];
+        else return $this->to_sido;
+    }
+
     public function scopeAvail(){
         return $this->where('move_date', '>=', carbon::now()->setTimezone('Asia/Seoul'))
             ->whereIn('req_status',['Ready','Matching']);

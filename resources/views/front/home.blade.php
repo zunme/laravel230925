@@ -2,7 +2,7 @@
 $random = \Str::random('8');;
 @endphp
 <template>
-  <div class="page mainpage page-{{$pagename}}">
+  <div class="page mainpage page-home">
 	<div class="navbar">
 		<div class="navbar-bg"></div>
 		<div class="navbar-inner navbar-inner-centered-title">
@@ -27,20 +27,38 @@ $random = \Str::random('8');;
 	</div>
       <div class="page-content noselect">
 		<div class="page-content-inner">
-			<div class="tw-h-80 tw-bg-mainbg">
-				<div id="test"></div>
+			<div class="">
+				<div class="swiper maintopbanner" style="--swiper-pagination-bottom:50px;">
+					<div class="swiper-wrapper">
+						<div class="swiper-slide">
+							<img src="/img/banner/WEB_BANNER1.png" />
+						</div>
+						<div class="swiper-slide">
+							<img src="/img/banner/WEB_BANNER2.png" />
+						</div>
+						<div class="swiper-slide">
+							<img src="/img/banner/WEB_BANNER3.png" />
+						</div>
+						<div class="swiper-slide">
+							<img src="/img/banner/WEB_BANNER4.png" />
+						</div>
+					</div>
+					<div class="swiper-pagination"></div>
+				</div>
 			</div>
 			<div class="">
 				<form id="{{$random}}_formMoveReg">
 					<div class="
 						tw-grow tw-max-w-[800px] tw-ml-auto tw-mr-auto tw-mt-[-30px] tw-bg-white tw-min-h-[10vh]
-						tw-rounded-xl tw-px-4 tw-py-4 sm:tw-px-10 sm:tw-py-10
-						box-shadow tw-mb-10
+						tw-rounded-2xl tw-px-4 tw-py-4 sm:tw-px-10 sm:tw-py-10
+						box-shadow tw-mb-10 relative z-index{1}
 						">
-						<div class="tw-text-base tw-font-semibold tw-text-gray-600 tw-text-center tw-mb-6">이사종류 선택하고 잘하는 업체 찾아보세요</div>
+						<div class="tw-text-lg tw-font-bold tw-text-gray-600 tw-text-center tw-mb-6">이사종류 선택하고 잘하는 업체 찾아보세요</div>
 						<div class="tw-grid tw-grid-cols-2 tw-gap-4 md:tw-grid-cols-4 md:tw-gap-2 md:tw-gap-4 tw-mb-4">
-							<label>
-								<input type="radio" name="move_type" value="1" class="radiobox-radio"  data-required="이사유형을 선택해주세요"  required/>
+							<label class="relative">
+								<input type="radio" name="move_type" value="1" class="radiobox-radio"  
+									@change=${scrollToForm}
+									data-required="이사유형을 선택해주세요"  required/>
 								<div class="radiobox vbox pack tw-rounded-lg">
 									<!--i class="fa-solid fa-house"></i-->
 									<img src="/icons/icon_home.png" />
@@ -50,8 +68,8 @@ $random = \Str::random('8');;
 									</div>
 								</div>
 							</label>
-							<label>
-								<input type="radio" name="move_type" value="1" class="radiobox-radio" />
+							<label class="relative">
+								<input type="radio" name="move_type" value="1" class="radiobox-radio" @change=${scrollToForm} />
 								<div class="radiobox vbox pack tw-rounded-lg">
 									<!--i class="fa-solid fa-building"></i-->
 									<img src="/icons/icon_office.png" />
@@ -61,8 +79,8 @@ $random = \Str::random('8');;
 									</div>
 								</div>
 							</label>
-							<label>
-								<input type="radio" name="move_type" value="1" class="radiobox-radio" />
+							<label class="relative">
+								<input type="radio" name="move_type" value="1" class="radiobox-radio" @change=${scrollToForm} />
 								<div class="radiobox vbox pack tw-rounded-lg">
 									<!--i class="fa-solid fa-house-user"></i-->
 									<img src="/icons/icon_oneroom.png" />
@@ -72,8 +90,8 @@ $random = \Str::random('8');;
 									</div>
 								</div>
 							</label>
-							<label>
-								<input type="radio" name="move_type" value="1" class="radiobox-radio" />
+							<label class="relative">
+								<input type="radio" name="move_type" value="1" class="radiobox-radio" @change=${scrollToForm} />
 								<div class="radiobox vbox pack tw-rounded-lg">
 									<!--i class="fa-solid fa-truck-ramp-box"></i-->
 									<img src="/icons/icon_keep.png" />
@@ -84,7 +102,7 @@ $random = \Str::random('8');;
 								</div>
 							</label>
 						</div>
-						<div class="tw-mb-4">
+						<div class="tw-mb-4" id="home_form_box">
 							<label class="tw-block tw-mb-2 tw-text-sm tw-font-medium tw-text-gray-900">이사날짜</label>
 							<input class="tw-select tw-cal tw-bg-gray-300/50 tw-border tw-border-gray-300 
 								tw-text-gray-900 tw-text-sm tw-rounded-lg tw-block tw-w-full tw-p-2.5
@@ -103,8 +121,9 @@ $random = \Str::random('8');;
 							<a href="#" class="smart-select"  data-open-in="popup" data-page-title="출발지 층수 선택">
 								<select name="from_floor" data-required="출발지 층수를 선택해주세요" required>
 									<option value="">층수선택</option>
-									<option value="-1">지하</option>
-									<option value="1">1층</option>
+									@foreach( config('moveinfo.floor') as $floor )
+										<option value="{{$floor['val']}}">{{$floor['label']}}</option>
+									@endforeach
 								</select>
 								<div class="item-content">
 									<div class="tw-flex tw-justify-between tw-select tw-bg-gray-300/50 tw-border tw-border-gray-300 
@@ -127,8 +146,9 @@ $random = \Str::random('8');;
 							<a href="#" class="smart-select"  data-open-in="popup" data-page-title="도착지 층수 선택">
 								<select name="to_floor" data-required="도착지 층수를 선택해주세요">
 									<option value="">층수선택</option>
-									<option value="-1">지하</option>
-									<option value="1">1층</option>
+									@foreach( config('moveinfo.floor') as $floor )
+										<option value="{{$floor['val']}}">{{$floor['label']}}</option>
+									@endforeach
 								</select>
 								<div class="item-content">
 									<div class="tw-flex tw-justify-between tw-select tw-bg-gray-300/50 tw-border tw-border-gray-300 
@@ -142,18 +162,21 @@ $random = \Str::random('8');;
 							</a>
 
 							<div class="flex items-center tw-mt-4">
-								<input type="checkbox" value="Y" name="keep"
+								<label class="tw-ml-2 tw-text-gray-900 tw-text-base tw-flex tw-items-center tw-tect-maincolor tw-font-semibold">
+									<input type="checkbox" value="Y" name="keep"
 									class="tw-w-4 tw-h-4 tw-text-blue-600 tw-bg-gray-100 tw-border-gray-300 tw-rounded 
 										focus:tw-ring-blue-500 focus:tw-ring-2" />
-								<label class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300 tw-tect-maincolor">보관 이사 필요</label>
+										<span class="tw-ml-2">보관 이사 필요</span>
+									</label>
 							</div>
 
 							<div class="tw-flex tw-justify-center">
 								<button type="button" 
-									class="tw-bg-mainbg tw-inline-flex tw-mt-8 tw-px-[30px] tw-py-[6px] tw-rounded tw-text-white"
+									class="tw-bg-[#5e6eff] tw-font-bold tw-h-[60px] tw-inline-flex tw-items-center tw-justify-center 
+									tw-max-w-[700px] tw-mt-8 tw-px-[30px] tw-py-[6px] tw-rounded-xl tw-text-white tw-text-xl tw-w-[90%]"
 									@click=${reg}
 									>
-									어쩌구저쩌구
+									이사견적 받기
 								</button>
 							</div>
 						</div>
@@ -164,24 +187,26 @@ $random = \Str::random('8');;
 					<div class="tw-flex tw-justify-center">
 						<img src="/images/nowlogo.png" style="max-width:700px; width:80vw"/>
 					</div>
-					<div class="tw-bg-amber-200 tw-px-2 tw-py-10">
+					<div class="tw-bg-amber-200 tw-px-2 tw-py-2">
 						<div class="tw-grow tw-max-w-[800px] tw-ml-auto tw-mr-auto">
 
-							<div class="slidewrapper v-slider tw-h-[228px]">
+							<div class="slidewrapper v-slider" id="vslider">
+								<ul class="tw-w-full">
 							<!-- Slides -->
 							@for($i=0; $i < 10; $i++)
-									<div class="slide">
-									<div class="tw-grid tw-grid-cols-5 tw-border-b-2 tw-px-4 tw-py-2 tw-text-sm tw-items-center">
-										<div class="tw-flex tw-justify-start">이사타입1</div>
-										<div class="tw-flex tw-justify-center">위치1</div>
-										<div class="tw-flex tw-justify-center">이*름1</div>
-										<div class="tw-flex tw-justify-center">2023-10-161</div>
-										<div class="tw-flex tw-justify-end">
-											<span class="tw-bg-gray-500 tw-inline-flex tw-px-[10px] tw-py-[3px] tw-rounded-sm tw-text-white">신규등록2</span>
+									<li class="slide">
+										<div class="tw-grid tw-grid-cols-5 tw-border-b-2 tw-px-4 tw-py-2 tw-text-sm tw-items-center">
+											<div class="tw-flex tw-justify-start">이사타입1</div>
+											<div class="tw-flex tw-justify-center">위치1</div>
+											<div class="tw-flex tw-justify-center">이*름1</div>
+											<div class="tw-flex tw-justify-center">2023-10-161</div>
+											<div class="tw-flex tw-justify-end">
+												<span class="tw-bg-gray-500 tw-inline-flex tw-px-[10px] tw-py-[3px] tw-rounded-sm tw-text-white">신규등록2</span>
+											</div>
 										</div>
-									</div>
-									</div>
+									</li>
 							@endfor
+								</ul>
 							</div>
 
 						</div>
@@ -194,7 +219,7 @@ $random = \Str::random('8');;
 					<div class="swiper mySwiper ">
 						<div class="swiper-wrapper">
 							@for($i=0; $i<20; $i++)
-							<div class="swiper-slide">
+							<div class="swiper-slide tw-text-sm">
 								<div class="tw-bg-gray-300 tw-flex tw-p-2 tw-rounded-lg">
 									<div>
 										<i class="fa-regular fa-user tw-px-1"></i>
@@ -227,7 +252,10 @@ $random = \Str::random('8');;
 				<div>
 					<div class="tw-grow tw-max-w-[400px] tw-ml-auto tw-mr-auto">
 						@for($i=0; $i<5 ; $i++)
-						<div class="tw-flex tw-py-6 tw-px-5 tw-rounded-xl box-shadow tw-bg-white tw-mb-4 tw-text-lg">
+						<div class="
+							tw-opacity-{{100 - $i*10}}
+							tw-flex tw-py-6 tw-px-5 tw-rounded-xl box-shadow tw-bg-white tw-mb-4 tw-text-lg
+						">
 							<div class="tw-pr-2 tw-text-mainbg">
 								<i class="fa-solid fa-circle-info"></i>
 							</div>
@@ -261,7 +289,9 @@ $random = \Str::random('8');;
 </template>
 <style>
 	.radiobox-radio{
-		display:none;
+		position: absolute;
+		top:16px;
+		left:16px;
 	}
 	.radiobox{
 		padding:20px 10px;
@@ -312,6 +342,10 @@ $random = \Str::random('8');;
 		background: none !important;
 	}
 
+	.maintopbanner .swiper-slide{
+		max-height: 430px;
+		overflow: hidden;
+	}
 </style>
 <script>
     export default function (props, ctx) {
@@ -325,6 +359,8 @@ $random = \Str::random('8');;
 		let fromAddress={};
 		let toAddress={};
 		let mainFormCall = {target:null, 'callid' : null};
+		let scrollToTop = 0;
+		var swiper, swiper2;
 
 		var vslider;
 
@@ -394,6 +430,7 @@ $random = \Str::random('8');;
 			 }, 400);
 		}
 		const createVerticalSlider = () =>{
+			/*
 			vslider = $('.v-slider').bxSlider({
 				mode: 'vertical',
 				auto: true,
@@ -407,10 +444,20 @@ $random = \Str::random('8');;
 				pager:false,
 				slideMargin: 2,
 			});
+			*/
+			$('#vslider').vTicker({   
+				speed: 500,
+				pause: 1500,
+				animation: 'fade',  
+				mousePause: true,  
+				showItems: 8,
+				height: 355,
+				direction: 'up'
+			});
 		}
 		const createReview=()=>{
 			swiper = new Swiper(".mySwiper", {
-				slidesPerView: 1,
+				slidesPerView: 1.2,
 				spaceBetween: 10,
 				centeredSlides: false,
 				autoplay: {
@@ -424,6 +471,21 @@ $random = \Str::random('8');;
 					768: {
 					slidesPerView: 4.2,
 					},
+					1024: {
+					slidesPerView: 5.2,
+					},
+				},
+			});
+			swiper2 = app.swiper.create('.swiper.maintopbanner', {
+				speed: 400,
+				spaceBetween: 100,
+				autoplay: {
+					delay: 2500,
+					disableOnInteraction: false,
+				},
+				pagination: {
+					el: '.swiper-pagination',
+					type: 'bullets',
 				},
 			});
 		}
@@ -436,7 +498,8 @@ $random = \Str::random('8');;
 					footer: true,
 					dateFormat:`yyyy-mm-dd`,
 					events: sonDays,
-					
+					headerPlaceholder:'이사일을 선택해주세요',
+					dayNames:'',
 					rangesClasses: [
 						 {
 							// string CSS class name for this range in "cssClass" property
@@ -502,6 +565,10 @@ $random = \Str::random('8');;
 					}
 				});
 		}
+		const scrollToForm=()=>{
+			//$(".page-content").scrollTop(scrollToTop) 
+			$(".page-content").animate({scrollTop:scrollToTop},500,'swing')
+		}
 		$$on('pageBeforeIn', (e, page) => {
             console.log( "before in")
         })
@@ -510,8 +577,14 @@ $random = \Str::random('8');;
 			createcalendar()
 			custEvents.on("post_code", addresschange )
 			custEvents.on("logined", loginEventCall )
-			
+			setTimeout(function(){
+				scrollToTop = $("#home_form_box").offset().top-60-20
+			}, 300)
         })
+		$$on('pageBeforeOut', ()=>{
+			app.swiper.destroy('.mySwiper')
+			app.swiper.destroy('.swiper.maintopbanner')
+		})
         $$on('pageAfterOut',()=>{
 			if( calendarModal ) calendarModal.destroy();
 			custEvents.off("post_code", addresschange )

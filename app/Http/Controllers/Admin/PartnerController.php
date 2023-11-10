@@ -52,16 +52,72 @@ class PartnerController extends Controller
     public function create(){
 
     }
-    public function store(){
-        
+    public function store(Request $request){
+        $formValidate = $request->validate([
+            'name'=>'bail|required|string',
+            'userid'=>'bail|required|string',
+            'tel'=>'bail|required|string',
+            'password'=>'bail|required|string',
+        ],[
+            "name.*"=>"아이디를 입력해주세요",
+            "userid.*"=>"이름을 입력해주세요",
+            "tel.*"=>"전화번호를 입력해주세요",
+            "password.*"=>"비밀번호를 입력해주세요",
+        ],[]
+        );
+        try {
+            $formValidate['tel'] = preg_replace('/[^0-9]*/s', '', $formValidate['tel']);
+            $partner = Partner::create( $formValidate );
+        } catch(Exception $e ){
+            return $this->error( $e->getMessage());
+        }
+        return $this->success($partner);
     }
     public function show($partner_id){
-        return $this->success(['id'=>$partner_id]);
+        $data = Partner::find( $partner_id );
+        return $this->success($data);
     }
     public function edit($partner_id){
     }
     public function update(Request $request, $partner_id)
     {
+        $formValidate = $request->validate([
+            'name'=>'bail|required|string',
+			'tel'=>'bail|required|string',
+        ],[
+            "move_type.*"=>"이름을 입력해주세요",
+			"tel.*"=>"전화번호를 입력해주세요",
+        ],[]
+        );
+        try {
+            $partner = Partner::findOrFail($partner_id);
+            $formValidate['tel'] = preg_replace('/[^0-9]*/s', '', $formValidate['tel']);
+            $partner->update( $formValidate );
+        } catch (ModelNotFoundException $exception) {
+            return $this->error('파트너 정보를 찾을 수 없습니다.',404);
+        } catch(Exception $e ){
+            return $this->error( $e->getMessage());
+        }
+        return $this->success();
+    }
+    public function updatePassword(Request $request, $partner_id)
+    {
+        $formValidate = $request->validate([
+            'password'=>'bail|required|string',
+        ],[
+            "password.*"=>"변경할 비밀번호를 입력해주세요",
+        ],[]
+        );
+        try {
+            $partner = Partner::findOrFail($partner_id);
+            $partner->password = \Hash::make($request->password);
+            $partner->save();
+        } catch (ModelNotFoundException $exception) {
+            return $this->error('파트너 정보를 찾을 수 없습니다.',404);
+        } catch(Exception $e ){
+            return $this->error( $e->getMessage());
+        }
+        return $this->success();
     }
     public function destroy($partner_id)
     {

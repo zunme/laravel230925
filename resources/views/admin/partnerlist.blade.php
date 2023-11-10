@@ -42,10 +42,10 @@
                                 >
                                 <i class="fa-solid fa-rotate-right"></i>
                             </a>
-                            <a href="/djemals/popup/addrequest" class="tw-cal tw-bg-white tw-text-blue-900
+                            <a href="/djemals/popup/partneradd" class="tw-cal tw-bg-white tw-text-blue-900
                                     tw-border tw-border-gray-300 
                                     tw-text-sm tw-rounded-lg tw-inline-block tw-w-auto tw-px-[10px] tw-py-[6px]"
-                                    @click=${reloadtable}
+                                    
                                 >
                                 <i class="fa-solid fa-plus"></i>
                             </a>
@@ -162,7 +162,11 @@
                             return data ?? ''
                         }
                     },
-                    {"data" : "userid",name:"userid", className: "","searchable": false,orderable: true, visible:true},
+                    {"data" : "userid",name:"userid", className: "","searchable": false,orderable: true, visible:true
+                        , render: function ( data, type, row, meta ) {
+                            return `<a href="/djemals/popup/partner/${row.id}">${data}</a>`
+                        }
+                    },
                     {"data" : "name",name:"name", className: "","searchable": false,orderable: true, visible:true},
                     {"data" : "tel",name:"tel", className: "","searchable": false,orderable: true, visible:true},
                     {"data" : "availarea",name:"availarea.id", className: "tw-min-w-[170px] ","searchable": false,orderable: true, visible:true

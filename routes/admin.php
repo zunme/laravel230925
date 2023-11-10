@@ -7,6 +7,7 @@ use App\Http\Controllers\Auth\CustomLoginController;
 use App\Http\Controllers\Admin\FrameworkController;
 
 Route::post('login', [CustomLoginController::class, 'adminstore'])->name('admin.login');
+Route::post('logout', [CustomLoginController::class, 'admindestroy']);
 
 Route::middleware('cache.headers:no_store')->group(function(){
 	/* framework */

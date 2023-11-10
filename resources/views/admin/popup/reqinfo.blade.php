@@ -50,13 +50,29 @@
     let defaultid = '{{$glbRandomId}}';
     let app_name = '{{config('app.name')}}'
     var info;
-    
+    let fromAddress, toAddress;
+
     const prevent=(e)=>{
         e.preventDefault()
         return false;
     } 
     const saveItem = (e)=>{
-        app.dialog.confirm('저장하시겠습니까?',app_name, saveItemPrc )
+        var form = $(e.target).closest('form')
+        var formdata = new FormData(form[0]);
+
+        formdata.append('_method','PUT')
+
+        //formdata.append('to_data', JSON.stringify(toAddress) ) 
+        //formdata.append('from_data', JSON.stringify(fromAddress) )
+
+        app.dialog.confirm('저장하시겠습니까?',app_name, function(){
+            axios.post( `/api/djemals/reqinfo/${props.id}`, formdata).then(res=>{
+                app.popup.close()
+                app.dialog.close()
+                custEvents.emit("moveInfoChanged",{id:props.id})
+                toastr('수정 완료','')
+            })
+        } )
     }
     const saveItemPrc = (e)=>{
         var id = props.id
@@ -67,7 +83,23 @@
     }
     const removeItemPrc = (e)=>{
         var id = props.id
-        app.dialog.alert('기능이 구현되지 않았습니다.')
+        axios.delete( `/api/djemals/reqinfo/${props.id}`, {id:id}).then(res=>{
+            app.popup.close()
+            app.dialog.close()
+            custEvents.emit("moveInfoChanged",{id:props.id})
+            toastr('삭제 완료','')
+        })
+    }
+    const openFromDaum =()=>{
+        openDaumPostPop('from')
+    }
+    const addresschange = (data )=>{
+        if( data.target_type =='from'){
+            $$(`input[name=from_address]`).val( data.addr + data.extraAddr )
+            fromAddress = data.orgdata;
+        }else if( data.target_type =='to'){
+            $$(`input[name=to_address]`).val( data.addr + data.extraAddr )
+        }
     }
 	let inputSet = [
 			{'type':'text', 'name':'move_type_label','label':'이사유형','disabled':true,'readonly':false, 'required':true, 'icon':{'ico':null, 'class':''}},
@@ -78,19 +110,21 @@
             {'type':'date', 'name':'move_date','label':'이사일','disabled':false,'readonly':false, 'required':true, 'icon':{'ico':null, 'class':''}},
 			{'type':'select', 'name':'req_status','label':'진행상태','disabled':false,'readonly':false, 'required':true, 'icon':{'ico':null, 'class':''}
                 ,'options':[
-                    {val:'Ready',label:'Ready'},
-                    {val:'Matching',label:'Matching'},
-                    {val:'Matched',label:'Matched'},
-                    {val:'Done',label:'Done'},
+                    {val:'Ready',label:'신규접수'},
+                    {val:'Matching',label:'진행중'},
+                    //{val:'Matched',label:'Matched'},
+                    //{val:'Done',label:'Done'},
                 ]
             },
-			{'type':'text', 'name':'from_address','label':'출발지','disabled':true,'readonly':false, 'required':true, 'icon':{'ico':null, 'class':''}},
-            {'type':'select', 'name':'from_floor','label':'출발지 층','disabled':true,'readonly':false, 'required':true, 'icon':{'ico':null, 'class':''}
+			{'type':'text', 'name':'from_address','label':'출발지','disabled':true,'readonly':false, 'required':true, 'icon':{'ico':null, 'class':''}
+                //, 'click':openFromDaum, 'click_name':'변경'
+            },
+            {'type':'select', 'name':'from_floor','label':'출발지 층','disabled':false,'readonly':false, 'required':true, 'icon':{'ico':null, 'class':''}
                 ,'options':@json( config("moveinfo.floor"))
             },
 
             {'type':'text', 'name':'to_address','label':'도착지','disabled':true,'readonly':false, 'required':true, 'icon':{'ico':null, 'class':''}},
-            {'type':'select', 'name':'to_floor','label':'도착지 층','disabled':true,'readonly':false, 'required':true, 'icon':{'ico':null, 'class':''}
+            {'type':'select', 'name':'to_floor','label':'도착지 층','disabled':false,'readonly':false, 'required':true, 'icon':{'ico':null, 'class':''}
                 ,'options':@json( config("moveinfo.floor"))
             },
 
@@ -111,9 +145,11 @@
 
     $on('popupOpened', (popup) => {
         getData()
+        custEvents.on("post_code", addresschange )
     });
     $on('popupClose', () => {
-      app.dialog.close()
+        custEvents.off("post_code", addresschange )
+        app.dialog.close()
     });
     return $render
   }
